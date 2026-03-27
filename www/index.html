@@ -119,6 +119,22 @@
       background: rgba(34,197,94,0.1);
       border: 1px solid rgba(34,197,94,0.2);
     }
+
+    /* Scroll animations */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Comparison table */
+    .compare-check { color: #22c55e; }
+    .compare-cross { color: rgba(255,255,255,0.2); }
+    .compare-col-highlight { background: rgba(34,197,94,0.05); border: 1px solid rgba(34,197,94,0.15); }
   </style>
 </head>
 <body class="font-sans bg-dark-900 text-white antialiased">
@@ -254,7 +270,7 @@
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
 
         <!-- 1 -->
-        <div class="feature-card rounded-2xl p-7">
+        <div class="feature-card fade-up rounded-2xl p-7">
           <div class="w-11 h-11 rounded-xl bg-brand-500/10 flex items-center justify-center mb-5">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.8" stroke-linecap="round"><path d="M4 17l6-6-6-6"/><path d="M12 19h8"/></svg>
           </div>
@@ -265,7 +281,7 @@
         </div>
 
         <!-- 2 -->
-        <div class="feature-card rounded-2xl p-7">
+        <div class="feature-card fade-up rounded-2xl p-7">
           <div class="w-11 h-11 rounded-xl bg-brand-500/10 flex items-center justify-center mb-5">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.8" stroke-linecap="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
           </div>
@@ -276,7 +292,7 @@
         </div>
 
         <!-- 3 -->
-        <div class="feature-card rounded-2xl p-7">
+        <div class="feature-card fade-up rounded-2xl p-7">
           <div class="w-11 h-11 rounded-xl bg-brand-500/10 flex items-center justify-center mb-5">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.8" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
           </div>
@@ -287,7 +303,7 @@
         </div>
 
         <!-- 4 -->
-        <div class="feature-card rounded-2xl p-7">
+        <div class="feature-card fade-up rounded-2xl p-7">
           <div class="w-11 h-11 rounded-xl bg-brand-500/10 flex items-center justify-center mb-5">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
           </div>
@@ -298,7 +314,7 @@
         </div>
 
         <!-- 5 -->
-        <div class="feature-card rounded-2xl p-7">
+        <div class="feature-card fade-up rounded-2xl p-7">
           <div class="w-11 h-11 rounded-xl bg-brand-500/10 flex items-center justify-center mb-5">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.8" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           </div>
@@ -309,7 +325,7 @@
         </div>
 
         <!-- 6 -->
-        <div class="feature-card rounded-2xl p-7">
+        <div class="feature-card fade-up rounded-2xl p-7">
           <div class="w-11 h-11 rounded-xl bg-brand-500/10 flex items-center justify-center mb-5">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M8 12l2 2 4-4"/></svg>
           </div>
@@ -336,21 +352,97 @@
       </div>
 
       <div class="grid md:grid-cols-3 gap-6">
-        <div class="text-center p-8">
+        <div class="fade-up text-center p-8">
           <div class="w-14 h-14 rounded-2xl bg-dark-700 border border-white/5 flex items-center justify-center mx-auto mb-5 text-2xl font-bold text-brand-400">1</div>
           <h3 class="font-semibold text-lg mb-2">Install</h3>
           <p class="text-white/40 text-sm leading-relaxed">Run <code class="font-mono text-brand-400/80 text-xs">install.sh</code>. It clones, builds the binary, installs the theme, and walks you through setup.</p>
         </div>
-        <div class="text-center p-8">
+        <div class="fade-up text-center p-8">
           <div class="w-14 h-14 rounded-2xl bg-dark-700 border border-white/5 flex items-center justify-center mx-auto mb-5 text-2xl font-bold text-brand-400">2</div>
           <h3 class="font-semibold text-lg mb-2">Run</h3>
           <p class="text-white/40 text-sm leading-relaxed">Start the binary and the theme server. Use nginx as a reverse proxy. No special ops knowledge needed.</p>
         </div>
-        <div class="text-center p-8">
+        <div class="fade-up text-center p-8">
           <div class="w-14 h-14 rounded-2xl bg-dark-700 border border-white/5 flex items-center justify-center mx-auto mb-5 text-2xl font-bold text-brand-400">3</div>
           <h3 class="font-semibold text-lg mb-2">Write</h3>
           <p class="text-white/40 text-sm leading-relaxed">Log in to the dashboard, write a post in Markdown, hit publish. Done. Your blog is live.</p>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPARISON -->
+  <section class="py-24 px-6 bg-dark-900">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center mb-16 fade-up">
+        <h2 class="text-3xl md:text-5xl font-bold tracking-tight mb-4">
+          Why FolioCMS?
+        </h2>
+        <p class="text-white/40 text-lg">
+          Built for people who want full control without the complexity.
+        </p>
+      </div>
+
+      <div class="overflow-x-auto fade-up">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-white/5">
+              <th class="text-left py-4 pr-6 text-white/30 font-medium w-1/3"></th>
+              <th class="py-4 px-4 text-center compare-col-highlight rounded-t-xl">
+                <div class="flex items-center justify-center gap-1.5 text-brand-400 font-semibold text-base">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="6" fill="#22c55e"/><path d="M7 8h10M7 12h7M7 16h5" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
+                  FolioCMS
+                </div>
+              </th>
+              <th class="py-4 px-4 text-center text-white/30 font-medium">Ghost</th>
+              <th class="py-4 px-4 text-center text-white/30 font-medium">WordPress</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b border-white/5">
+              <td class="py-4 pr-6 text-white/50">Self-hosted</td>
+              <td class="py-4 px-4 text-center compare-col-highlight compare-check font-bold text-lg">✓</td>
+              <td class="py-4 px-4 text-center text-white/30 text-xs">Paid plan or self-host</td>
+              <td class="py-4 px-4 text-center compare-check font-bold text-lg">✓</td>
+            </tr>
+            <tr class="border-b border-white/5">
+              <td class="py-4 pr-6 text-white/50">Single binary</td>
+              <td class="py-4 px-4 text-center compare-col-highlight compare-check font-bold text-lg">✓</td>
+              <td class="py-4 px-4 text-center compare-cross text-lg">✕</td>
+              <td class="py-4 px-4 text-center compare-cross text-lg">✕</td>
+            </tr>
+            <tr class="border-b border-white/5">
+              <td class="py-4 pr-6 text-white/50">No Docker required</td>
+              <td class="py-4 px-4 text-center compare-col-highlight compare-check font-bold text-lg">✓</td>
+              <td class="py-4 px-4 text-center compare-cross text-lg">✕</td>
+              <td class="py-4 px-4 text-center compare-check font-bold text-lg">✓</td>
+            </tr>
+            <tr class="border-b border-white/5">
+              <td class="py-4 pr-6 text-white/50">SQLite (no DB server)</td>
+              <td class="py-4 px-4 text-center compare-col-highlight compare-check font-bold text-lg">✓</td>
+              <td class="py-4 px-4 text-center compare-cross text-lg">✕</td>
+              <td class="py-4 px-4 text-center compare-cross text-lg">✕</td>
+            </tr>
+            <tr class="border-b border-white/5">
+              <td class="py-4 pr-6 text-white/50">No monthly fee</td>
+              <td class="py-4 px-4 text-center compare-col-highlight compare-check font-bold text-lg">✓</td>
+              <td class="py-4 px-4 text-center text-white/30 text-xs">$9+/mo hosted</td>
+              <td class="py-4 px-4 text-center compare-check font-bold text-lg">✓</td>
+            </tr>
+            <tr class="border-b border-white/5">
+              <td class="py-4 pr-6 text-white/50">Markdown native</td>
+              <td class="py-4 px-4 text-center compare-col-highlight compare-check font-bold text-lg">✓</td>
+              <td class="py-4 px-4 text-center compare-check font-bold text-lg">✓</td>
+              <td class="py-4 px-4 text-center compare-cross text-lg">✕</td>
+            </tr>
+            <tr>
+              <td class="py-4 pr-6 text-white/50">Open source (MIT)</td>
+              <td class="py-4 px-4 text-center compare-col-highlight compare-check font-bold text-lg rounded-b-xl">✓</td>
+              <td class="py-4 px-4 text-center compare-check font-bold text-lg">✓</td>
+              <td class="py-4 px-4 text-center compare-check font-bold text-lg">✓</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </section>
@@ -425,6 +517,17 @@
   </footer>
 
   <script>
+    // ── Scroll animations ─────────────────────────────────────────
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('visible'), i * 80);
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
     // ── Mobile nav ────────────────────────────────────────────────
     const navToggle = document.getElementById('nav-toggle');
     const mobileMenu = document.getElementById('mobile-menu');
