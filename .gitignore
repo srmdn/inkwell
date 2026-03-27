@@ -29,3 +29,6 @@ Thumbs.db
 
 # Go
 vendor/
+
+# Node (precaution — no package.json in this repo, but prevent accidental commits)
+node_modules/
