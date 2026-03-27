@@ -8,7 +8,7 @@ First usable release.
 - Migration runner with version tracking
 - First-run setup wizard (`--setup`)
 - `install.sh` — one-command installer
-- Default Astro theme (`inkwell-theme-default`)
+- Default Astro theme (`foliocms-theme-default`)
 - Theme contract, API reference, configuration reference docs
 
 ---

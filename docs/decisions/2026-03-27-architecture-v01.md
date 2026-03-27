@@ -6,7 +6,7 @@
 
 ## Context
 
-First architectural decisions for the Inkwell CMS project. Needed to settle
+First architectural decisions for the Folio CMS project. Needed to settle
 structure before scaffolding begins.
 
 ## Decisions
@@ -38,7 +38,7 @@ for users with non-standard layouts.
 
 ### 4. Admin setup via CLI flag `--setup`
 
-First-run wizard triggered by `./inkwell --setup`. Creates the admin account
+First-run wizard triggered by `./folio --setup`. Creates the admin account
 interactively.
 
 **Rationale:** Better UX for open source installs than requiring manual env
@@ -60,6 +60,6 @@ long-term and can replace this in a future version without breaking the API.
 
 ## Follow-up Actions
 
-- [x] Create `inkwell-theme-default` repo (separate, Astro SSR)
+- [x] Create `foliocms-theme-default` repo (separate, Astro SSR)
 - [x] Write migration runner in `internal/db/`
 - [x] Document `--setup` flow in README

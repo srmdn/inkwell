@@ -41,7 +41,7 @@ Project-specific (customize after copy):
 
 ---
 
-## Project: Inkwell
+## Project: Folio
 
 A lightweight, self-hostable CMS. Single Go binary, SQLite, ships with a
 default Astro theme. No Docker required.

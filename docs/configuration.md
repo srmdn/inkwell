@@ -1,6 +1,6 @@
 # Configuration
 
-Inkwell is configured entirely through environment variables. Copy
+Folio is configured entirely through environment variables. Copy
 `.env.example` to `.env` and fill in the required values before starting.
 
 ```bash
@@ -29,7 +29,7 @@ cp .env.example .env
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `DATABASE_URL` | `data/inkwell.db` | Path to the SQLite database file. Relative to the binary or absolute. |
+| `DATABASE_URL` | `data/folio.db` | Path to the SQLite database file. Relative to the binary or absolute. |
 
 The database directory is created automatically if it does not exist.
 
@@ -72,7 +72,7 @@ exposed. Consider unsetting them or using interactive setup instead.
 
 ```env
 PORT=8090
-DATABASE_URL=data/inkwell.db
+DATABASE_URL=data/folio.db
 CONTENT_DIR=content/blog
 
 JWT_SECRET=your-generated-secret-here

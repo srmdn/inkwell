@@ -1,7 +1,7 @@
 # Theme Contract
 
-This document defines the interface between the Inkwell backend and any
-frontend theme. A theme that follows this contract is compatible with Inkwell
+This document defines the interface between the Folio backend and any
+frontend theme. A theme that follows this contract is compatible with Folio
 out of the box.
 
 You do not need to read or modify the Go backend to build a theme.
@@ -13,11 +13,11 @@ You do not need to read or modify the Go backend to build a theme.
 A theme is any frontend that:
 
 1. Reads post content from the filesystem (content contract)
-2. Optionally calls the Inkwell REST API for dynamic data
+2. Optionally calls the Folio REST API for dynamic data
 3. Exposes a build command the backend can call
 4. Optionally runs as a service the backend can restart after a build
 
-Inkwell ships with one default theme (`inkwell-theme-default`, Astro SSR).
+Folio ships with one default theme (`foliocms-theme-default`, Astro SSR).
 You can replace it with any framework — Astro, Next.js, SvelteKit, plain HTML,
 or anything else — as long as it follows this contract.
 
@@ -37,7 +37,7 @@ theme reads them.
     hero.webp       ← optional hero/OG image
 ```
 
-`CONTENT_DIR` defaults to `content/blog` relative to the Inkwell binary.
+`CONTENT_DIR` defaults to `content/blog` relative to the Folio binary.
 It is configurable via the `CONTENT_DIR` environment variable.
 
 ### Frontmatter Spec
@@ -80,7 +80,7 @@ be quoted, or YAML parsing will fail.
 
 ## 2. API Contract
 
-The Inkwell backend exposes a REST API. Themes may use the public endpoints
+The Folio backend exposes a REST API. Themes may use the public endpoints
 for dynamic data (view counts, etc.) or skip them entirely if building static.
 
 ### Base URL
@@ -125,7 +125,7 @@ need runtime data.
 
 ## 3. Build Contract
 
-The Inkwell backend triggers a theme rebuild via a shell command. This happens
+The Folio backend triggers a theme rebuild via a shell command. This happens
 when the admin clicks "Rebuild Site" in the dashboard.
 
 ### Configuration
@@ -136,7 +136,7 @@ THEME_BUILD_CMD=npm run build
 ```
 
 - `THEME_DIR` — directory where the build command is executed (relative to
-  the Inkwell binary, or absolute)
+  the Folio binary, or absolute)
 - `THEME_BUILD_CMD` — the command to run. Executed as a subprocess with
   `THEME_DIR` as the working directory.
 
@@ -207,10 +207,10 @@ Minimum requirements:
 2. Parse YAML frontmatter using the field spec above
 3. Skip posts where `draft: true` or `publishDate` is in the future
 4. Expose a build command (any tool: npm, bun, make, etc.)
-5. Accept `THEME_DIR` and `THEME_BUILD_CMD` configuration in Inkwell's `.env`
+5. Accept `THEME_DIR` and `THEME_BUILD_CMD` configuration in Folio's `.env`
 
 Optional:
 - Call `POST /api/posts/{slug}/view` on each page visit to track views
 - Set `THEME_SERVICE` if running as an SSR service that needs restarting
 
-See `inkwell-theme-default` for a reference implementation using Astro SSR.
+See `foliocms-theme-default` for a reference implementation using Astro SSR.

@@ -3,7 +3,7 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/srmdn/inkwell/internal/auth"
+	"github.com/srmdn/foliocms/internal/auth"
 )
 
 // VerifyCSRF validates the X-CSRF-Token header on mutating requests.

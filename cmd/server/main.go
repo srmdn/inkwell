@@ -15,11 +15,11 @@ import (
 	"github.com/go-chi/chi/v5"
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
 
-	"github.com/srmdn/inkwell/internal/config"
-	"github.com/srmdn/inkwell/internal/db"
-	"github.com/srmdn/inkwell/internal/handler"
-	"github.com/srmdn/inkwell/internal/middleware"
-	"github.com/srmdn/inkwell/internal/rebuild"
+	"github.com/srmdn/foliocms/internal/config"
+	"github.com/srmdn/foliocms/internal/db"
+	"github.com/srmdn/foliocms/internal/handler"
+	"github.com/srmdn/foliocms/internal/middleware"
+	"github.com/srmdn/foliocms/internal/rebuild"
 )
 
 // version is set at build time via -ldflags "-X main.version=v0.1.0"
@@ -55,7 +55,7 @@ func main() {
 		if err := runSetup(database, cfg); err != nil {
 			log.Fatalf("setup: %v", err)
 		}
-		fmt.Println("Setup complete. Run inkwell without --setup to start the server.")
+		fmt.Println("Setup complete. Run folio without --setup to start the server.")
 		os.Exit(0)
 	}
 
@@ -105,7 +105,7 @@ func main() {
 	}
 
 	go func() {
-		log.Printf("inkwell listening on :%s", cfg.Port)
+		log.Printf("folio listening on :%s", cfg.Port)
 		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Fatalf("server: %v", err)
 		}
@@ -120,5 +120,5 @@ func main() {
 	if err := srv.Shutdown(ctx); err != nil {
 		log.Fatalf("shutdown: %v", err)
 	}
-	log.Println("inkwell stopped")
+	log.Println("folio stopped")
 }

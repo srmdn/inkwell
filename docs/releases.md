@@ -13,24 +13,24 @@ Every git tag gets a GitHub release. No tags without releases.
 
 ## Binary Build Targets
 
-Inkwell is a single Go binary. Attach pre-built binaries for:
+Folio is a single Go binary. Attach pre-built binaries for:
 
 | Target | GOOS | GOARCH | Filename |
 |--------|------|--------|----------|
-| Linux 64-bit | `linux` | `amd64` | `inkwell-linux-amd64` |
-| Linux ARM | `linux` | `arm64` | `inkwell-linux-arm64` |
-| macOS Intel | `darwin` | `amd64` | `inkwell-darwin-amd64` |
-| macOS Apple Silicon | `darwin` | `arm64` | `inkwell-darwin-arm64` |
+| Linux 64-bit | `linux` | `amd64` | `folio-linux-amd64` |
+| Linux ARM | `linux` | `arm64` | `folio-linux-arm64` |
+| macOS Intel | `darwin` | `amd64` | `folio-darwin-amd64` |
+| macOS Apple Silicon | `darwin` | `arm64` | `folio-darwin-arm64` |
 
 Build all targets before publishing:
 
 ```bash
 VERSION=v0.1.0
 
-GOOS=linux  GOARCH=amd64 go build -ldflags "-X main.version=${VERSION}" -o inkwell-linux-amd64  ./cmd/server/
-GOOS=linux  GOARCH=arm64 go build -ldflags "-X main.version=${VERSION}" -o inkwell-linux-arm64  ./cmd/server/
-GOOS=darwin GOARCH=amd64 go build -ldflags "-X main.version=${VERSION}" -o inkwell-darwin-amd64 ./cmd/server/
-GOOS=darwin GOARCH=arm64 go build -ldflags "-X main.version=${VERSION}" -o inkwell-darwin-arm64 ./cmd/server/
+GOOS=linux  GOARCH=amd64 go build -ldflags "-X main.version=${VERSION}" -o folio-linux-amd64  ./cmd/server/
+GOOS=linux  GOARCH=arm64 go build -ldflags "-X main.version=${VERSION}" -o folio-linux-arm64  ./cmd/server/
+GOOS=darwin GOARCH=amd64 go build -ldflags "-X main.version=${VERSION}" -o folio-darwin-amd64 ./cmd/server/
+GOOS=darwin GOARCH=arm64 go build -ldflags "-X main.version=${VERSION}" -o folio-darwin-arm64 ./cmd/server/
 ```
 
 ## Release Process
@@ -60,23 +60,23 @@ gh release create v0.1.0 \
 
 ## Install
 
-See [README](https://github.com/srmdn/inkwell#install) for full instructions.
+See [README](https://github.com/srmdn/foliocms#install) for full instructions.
 
 Download the binary for your platform below, or build from source:
 
 ```
-go install github.com/srmdn/inkwell/cmd/server@v0.1.0
+go install github.com/srmdn/foliocms/cmd/server@v0.1.0
 ```
 
 ## Full Changelog
 
-https://github.com/srmdn/inkwell/commits/v0.1.0
+https://github.com/srmdn/foliocms/commits/v0.1.0
 EOF
 )" \
-  inkwell-linux-amd64 \
-  inkwell-linux-arm64 \
-  inkwell-darwin-amd64 \
-  inkwell-darwin-arm64
+  folio-linux-amd64 \
+  folio-linux-arm64 \
+  folio-darwin-amd64 \
+  folio-darwin-arm64
 ```
 
 ## Release Notes Format
@@ -97,7 +97,7 @@ Replace the binary and run with --migrate if prompted.
 
 ## Full Changelog
 
-https://github.com/srmdn/inkwell/compare/v0.1.0...v0.2.0
+https://github.com/srmdn/foliocms/compare/v0.1.0...v0.2.0
 ```
 
 ## Patch Releases

@@ -8,14 +8,14 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/srmdn/inkwell/internal/config"
-	"github.com/srmdn/inkwell/internal/db"
+	"github.com/srmdn/foliocms/internal/config"
+	"github.com/srmdn/foliocms/internal/db"
 )
 
 func runSetup(database *db.DB, cfg *config.Config) error {
 	reader := bufio.NewReader(os.Stdin)
 
-	fmt.Println("=== Inkwell First-Time Setup ===")
+	fmt.Println("=== Folio First-Time Setup ===")
 	fmt.Println()
 
 	email := cfg.AdminEmail

@@ -6,7 +6,7 @@
 
 ## Context
 
-The primary `.com` TLD for "inkwell" is taken. Considered buying an
+The primary `.com` TLD for "folio" is taken. Considered buying an
 alternative TLD and building a Ghost-style marketing site before development
 begins.
 
@@ -24,7 +24,7 @@ Defer domain purchase and landing page until after v0.1 ships.
 
 ## Consequences
 
-- GitHub repo (`github.com/srmdn/inkwell`) is the canonical project URL
+- GitHub repo (`github.com/srmdn/foliocms`) is the canonical project URL
   until a domain is purchased
 - README must be clear enough to serve as the project landing page for now
 
@@ -32,10 +32,10 @@ Defer domain purchase and landing page until after v0.1 ships.
 
 When v0.1 ships, revisit:
 
-- [ ] Check domain availability: `getinkwell.com`, `inkwellcms.com`,
-      `inkwell.dev`, `inkwell.app`, `tryinkwell.com`
+- [ ] Check domain availability: `getfolio.com`, `foliocms.com`,
+      `folio.dev`, `folio.app`, `tryfolio.com`
 - [ ] Build a static landing page (Astro, hosted on existing VPS or
       GitHub Pages)
 - [ ] Update README to point to new domain once acquired
-- [ ] Consider a separate GitHub org (`inkwell-cms`) if the project
+- [ ] Consider a separate GitHub org (`folio-cms`) if the project
       grows beyond a single maintainer

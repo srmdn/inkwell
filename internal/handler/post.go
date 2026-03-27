@@ -11,8 +11,8 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
-	"github.com/srmdn/inkwell/internal/model"
-	"github.com/srmdn/inkwell/internal/storage"
+	"github.com/srmdn/foliocms/internal/model"
+	"github.com/srmdn/foliocms/internal/storage"
 )
 
 var slugPattern = regexp.MustCompile(`^[a-z0-9]+(?:-[a-z0-9]+)*$`)

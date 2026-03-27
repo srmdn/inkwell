@@ -41,7 +41,7 @@ func Load(envFile string) (*Config, error) {
 
 	return &Config{
 		Port:          port,
-		DatabaseURL:   getEnv("DATABASE_URL", "data/inkwell.db"),
+		DatabaseURL:   getEnv("DATABASE_URL", "data/folio.db"),
 		ContentDir:    getEnv("CONTENT_DIR", "content/blog"),
 		JWTSecret:     jwtSecret,
 		AdminEmail:    os.Getenv("ADMIN_EMAIL"),

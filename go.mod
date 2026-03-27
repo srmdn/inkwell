@@ -1,4 +1,4 @@
-module github.com/srmdn/inkwell
+module github.com/srmdn/foliocms
 
 go 1.26.1
 

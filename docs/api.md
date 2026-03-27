@@ -1,6 +1,6 @@
 # API Reference
 
-Base URL: wherever Inkwell is running (e.g. `http://localhost:8090`)
+Base URL: wherever Folio is running (e.g. `http://localhost:8090`)
 
 All responses are JSON. All request bodies must be `Content-Type: application/json`.
 

@@ -1,4 +1,4 @@
-# Project Brief: Inkwell
+# Project Brief: Folio
 
 ## What it does
 A lightweight, self-hostable CMS. Single Go binary, SQLite, ships with a
@@ -42,9 +42,9 @@ service for the Astro theme if used.
 - Anything beyond a blog CMS (no portfolio sections, no link directories, etc.)
 
 ## Post-v0.1 (revisit after first release)
-- Domain: check `getinkwell.com`, `inkwellcms.com`, `inkwell.dev`, `inkwell.app`
+- Domain: check `getfolio.com`, `foliocms.com`, `folio.dev`, `folio.app`
 - Landing page: static Astro site, hosted independently
-- Default Astro theme: ship as separate repo (`inkwell-theme-default`)
+- Default Astro theme: ship as separate repo (`foliocms-theme-default`)
 - Rebuild mechanism: replace subprocess approach with webhook
 - Newsletter support
-- Consider GitHub org (`inkwell-cms`) if project grows
+- Consider GitHub org (`folio-cms`) if project grows

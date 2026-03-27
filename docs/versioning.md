@@ -1,6 +1,6 @@
 # Versioning
 
-Inkwell follows Semantic Versioning: `vMAJOR.MINOR.PATCH`
+Folio follows Semantic Versioning: `vMAJOR.MINOR.PATCH`
 
 ## The Three Numbers
 
@@ -25,7 +25,7 @@ and have a working CMS. Requires:
 - [x] README has real install instructions
 - [x] Pre-built binary attached to the GitHub release
 
-**Shipped 2026-03-27**: https://github.com/srmdn/inkwell/releases/tag/v0.1.0
+**Shipped 2026-03-27**: https://github.com/srmdn/foliocms/releases/tag/v0.1.0
 
 ### `v0.x.x` — Unstable
 

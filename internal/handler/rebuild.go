@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 
-	"github.com/srmdn/inkwell/internal/rebuild"
+	"github.com/srmdn/foliocms/internal/rebuild"
 )
 
 func (h *Handler) TriggerRebuild(w http.ResponseWriter, r *http.Request) {

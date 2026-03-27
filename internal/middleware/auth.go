@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/srmdn/inkwell/internal/auth"
+	"github.com/srmdn/foliocms/internal/auth"
 )
 
 // Authenticate validates the JWT from either the "token" cookie or the

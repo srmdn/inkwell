@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Inkwell installer
+# Folio installer
 # Usage: bash install.sh [--dir <path>]
 #
-# Clones inkwell + inkwell-theme-default, builds the binary,
+# Clones folio + foliocms-theme-default, builds the binary,
 # installs theme dependencies, and walks through first-run setup.
 
-INKWELL_REPO="https://github.com/srmdn/inkwell.git"
-THEME_REPO="https://github.com/srmdn/inkwell-theme-default.git"
-DEFAULT_DIR="inkwell"
+FOLIO_REPO="https://github.com/srmdn/foliocms.git"
+THEME_REPO="https://github.com/srmdn/foliocms-theme-default.git"
+DEFAULT_DIR="folio"
 INSTALL_DIR=""
 
 # --- helpers -----------------------------------------------------------------
@@ -82,31 +82,31 @@ fi
 
 info "Installing to: $INSTALL_DIR"
 
-# --- clone inkwell ------------------------------------------------------------
+# --- clone folio ------------------------------------------------------------
 
-header "Cloning Inkwell"
+header "Cloning Folio"
 
-git clone --depth=1 "$INKWELL_REPO" "$INSTALL_DIR"
-ok "Cloned inkwell"
+git clone --depth=1 "$FOLIO_REPO" "$INSTALL_DIR"
+ok "Cloned folio"
 
 cd "$INSTALL_DIR"
 
 # --- build binary ------------------------------------------------------------
 
-header "Building Inkwell binary"
+header "Building Folio binary"
 
 VERSION=$(git describe --tags --exact-match 2>/dev/null || echo "dev")
 info "Version: $VERSION"
 
-go build -ldflags "-X main.version=$VERSION" -o inkwell ./cmd/server/
-ok "Binary built: $INSTALL_DIR/inkwell"
+go build -ldflags "-X main.version=$VERSION" -o folio ./cmd/server/
+ok "Binary built: $INSTALL_DIR/folio"
 
 # --- clone theme -------------------------------------------------------------
 
 header "Installing default theme"
 
 git clone --depth=1 "$THEME_REPO" theme
-ok "Cloned inkwell-theme-default → theme/"
+ok "Cloned foliocms-theme-default → theme/"
 
 cd theme
 info "Installing npm dependencies..."
@@ -136,7 +136,7 @@ cat > .env <<EOF
 PORT=$PORT
 
 # Database
-DATABASE_URL=data/inkwell.db
+DATABASE_URL=data/folio.db
 
 # Content
 CONTENT_DIR=content/blog
@@ -156,18 +156,18 @@ ok ".env created (JWT_SECRET auto-generated)"
 
 header "First-run setup"
 
-info "Running ./inkwell --setup to create the admin account..."
+info "Running ./folio --setup to create the admin account..."
 echo ""
-./inkwell --setup
+./folio --setup
 
 # --- done --------------------------------------------------------------------
 
 header "Installation complete"
 
 echo ""
-echo "  Start Inkwell:"
+echo "  Start Folio:"
 echo "    cd $INSTALL_DIR"
-echo "    ./inkwell"
+echo "    ./folio"
 echo ""
 echo "  The API listens on port $PORT."
 echo "  Serve the theme with:  cd theme && node dist/server/entry.mjs"

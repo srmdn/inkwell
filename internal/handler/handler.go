@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/srmdn/inkwell/internal/config"
-	"github.com/srmdn/inkwell/internal/db"
-	"github.com/srmdn/inkwell/internal/rebuild"
+	"github.com/srmdn/foliocms/internal/config"
+	"github.com/srmdn/foliocms/internal/db"
+	"github.com/srmdn/foliocms/internal/rebuild"
 )
 
 // Handler holds shared dependencies for all HTTP handlers.

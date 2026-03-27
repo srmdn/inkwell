@@ -7,8 +7,8 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/srmdn/inkwell/internal/auth"
-	"github.com/srmdn/inkwell/internal/middleware"
+	"github.com/srmdn/foliocms/internal/auth"
+	"github.com/srmdn/foliocms/internal/middleware"
 )
 
 type loginRequest struct {
