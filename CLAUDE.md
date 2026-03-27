@@ -38,3 +38,29 @@ Project-specific (customize after copy):
 - code owners
 - release policy
 - escalation and incident contacts
+
+---
+
+## Project: Inkwell
+
+A lightweight, self-hostable CMS. Single Go binary, SQLite, ships with a
+default Astro theme. No Docker required.
+
+## Stack
+- Backend: Go, Chi router, SQLite
+- Default theme: Astro SSR
+- Auth: JWT + CSRF
+- Binary: single compiled Go binary
+
+## Environment: LOCAL DEV
+
+## Conventions
+- Secrets in `.env` — never committed
+- `.env.example` committed with all variable names, no real values
+- Build output gitignored
+- No Docker, no external runtime dependencies
+- Keep commits small — one logical change per commit
+
+## Do not modify without confirming
+- Database migration files
+- `.env.example` (only add keys, never remove — could break existing installs)
