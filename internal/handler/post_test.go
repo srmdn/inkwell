@@ -1,0 +1,207 @@
+package handler_test
+
+import (
+	"bytes"
+	"encoding/json"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/srmdn/foliocms/internal/handler"
+)
+
+func routerWithHandler(h *handler.Handler) *chi.Mux {
+	r := chi.NewRouter()
+	r.Get("/api/posts", h.ListPosts)
+	r.Get("/api/posts/{slug}", h.GetPost)
+	r.Get("/api/admin/posts", h.ListAllPosts)
+	r.Get("/api/admin/posts/{slug}", h.GetAdminPost)
+	r.Post("/api/admin/posts/{slug}", h.CreatePost)
+	r.Put("/api/admin/posts/{slug}", h.UpdatePost)
+	r.Delete("/api/admin/posts/{slug}", h.DeletePost)
+	return r
+}
+
+func createPost(t *testing.T, r *chi.Mux, slug string, body map[string]any) *httptest.ResponseRecorder {
+	t.Helper()
+	b, _ := json.Marshal(body)
+	req := httptest.NewRequest(http.MethodPost, "/api/admin/posts/"+slug, bytes.NewReader(b))
+	req.Header.Set("Content-Type", "application/json")
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+	return w
+}
+
+func TestListPostsEmpty(t *testing.T) {
+	dir := t.TempDir()
+	h := newTestHandler(t, dir)
+	r := routerWithHandler(h)
+
+	req := httptest.NewRequest(http.MethodGet, "/api/posts", nil)
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Errorf("status: got %d, want %d", w.Code, http.StatusOK)
+	}
+}
+
+func TestCreatePostSuccess(t *testing.T) {
+	dir := t.TempDir()
+	h := newTestHandler(t, dir)
+	r := routerWithHandler(h)
+
+	w := createPost(t, r, "my-post", map[string]any{
+		"title":       "My Post",
+		"description": "A description",
+		"draft":       false,
+		"tags":        []string{"go"},
+		"body":        "# Hello\n",
+	})
+
+	if w.Code != http.StatusCreated {
+		t.Errorf("status: got %d, want %d\nbody: %s", w.Code, http.StatusCreated, w.Body.String())
+	}
+}
+
+func TestCreatePostInvalidSlug(t *testing.T) {
+	dir := t.TempDir()
+	h := newTestHandler(t, dir)
+	r := routerWithHandler(h)
+
+	// Uppercase letters are rejected by the slug pattern; URL must still be valid.
+	w := createPost(t, r, "INVALID", map[string]any{"title": "T"})
+
+	if w.Code != http.StatusBadRequest {
+		t.Errorf("status: got %d, want %d", w.Code, http.StatusBadRequest)
+	}
+}
+
+func TestCreatePostMissingTitle(t *testing.T) {
+	dir := t.TempDir()
+	h := newTestHandler(t, dir)
+	r := routerWithHandler(h)
+
+	w := createPost(t, r, "valid-slug", map[string]any{"title": ""})
+
+	if w.Code != http.StatusBadRequest {
+		t.Errorf("status: got %d, want %d", w.Code, http.StatusBadRequest)
+	}
+}
+
+func TestCreatePostDuplicateSlug(t *testing.T) {
+	dir := t.TempDir()
+	h := newTestHandler(t, dir)
+	r := routerWithHandler(h)
+
+	createPost(t, r, "dup-slug", map[string]any{"title": "First"})
+	w := createPost(t, r, "dup-slug", map[string]any{"title": "Second"})
+
+	if w.Code != http.StatusConflict {
+		t.Errorf("status: got %d, want %d", w.Code, http.StatusConflict)
+	}
+}
+
+func TestGetPostNotFound(t *testing.T) {
+	dir := t.TempDir()
+	h := newTestHandler(t, dir)
+	r := routerWithHandler(h)
+
+	req := httptest.NewRequest(http.MethodGet, "/api/posts/no-such-post", nil)
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	if w.Code != http.StatusNotFound {
+		t.Errorf("status: got %d, want %d", w.Code, http.StatusNotFound)
+	}
+}
+
+func TestGetAdminPostFound(t *testing.T) {
+	dir := t.TempDir()
+	h := newTestHandler(t, dir)
+	r := routerWithHandler(h)
+
+	createPost(t, r, "found-post", map[string]any{
+		"title": "Found Post",
+		"draft": true,
+	})
+
+	req := httptest.NewRequest(http.MethodGet, "/api/admin/posts/found-post", nil)
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Errorf("status: got %d, want %d\nbody: %s", w.Code, http.StatusOK, w.Body.String())
+	}
+}
+
+func TestPublicListExcludesDrafts(t *testing.T) {
+	dir := t.TempDir()
+	h := newTestHandler(t, dir)
+	r := routerWithHandler(h)
+
+	createPost(t, r, "draft-post", map[string]any{
+		"title": "Draft",
+		"draft": true,
+	})
+	createPost(t, r, "pub-post", map[string]any{
+		"title":        "Published",
+		"draft":        false,
+		"publish_date": "2026-01-01",
+	})
+
+	req := httptest.NewRequest(http.MethodGet, "/api/posts", nil)
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	var posts []map[string]any
+	json.Unmarshal(w.Body.Bytes(), &posts)
+
+	if len(posts) != 1 {
+		t.Errorf("expected 1 published post, got %d", len(posts))
+	}
+}
+
+func TestUpdatePost(t *testing.T) {
+	dir := t.TempDir()
+	h := newTestHandler(t, dir)
+	r := routerWithHandler(h)
+
+	createPost(t, r, "update-me", map[string]any{"title": "Original"})
+
+	updated, _ := json.Marshal(map[string]any{"title": "Updated", "draft": false})
+	req := httptest.NewRequest(http.MethodPut, "/api/admin/posts/update-me", bytes.NewReader(updated))
+	req.Header.Set("Content-Type", "application/json")
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	if w.Code != http.StatusNoContent {
+		t.Errorf("status: got %d, want %d\nbody: %s", w.Code, http.StatusNoContent, w.Body.String())
+	}
+}
+
+func TestDeletePost(t *testing.T) {
+	dir := t.TempDir()
+	h := newTestHandler(t, dir)
+	r := routerWithHandler(h)
+
+	createPost(t, r, "delete-me", map[string]any{"title": "Delete Me"})
+
+	req := httptest.NewRequest(http.MethodDelete, "/api/admin/posts/delete-me", nil)
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	if w.Code != http.StatusNoContent {
+		t.Errorf("status: got %d, want %d", w.Code, http.StatusNoContent)
+	}
+
+	// Confirm gone from admin list
+	req2 := httptest.NewRequest(http.MethodGet, "/api/admin/posts/delete-me", nil)
+	w2 := httptest.NewRecorder()
+	r.ServeHTTP(w2, req2)
+
+	if w2.Code != http.StatusNotFound {
+		t.Errorf("after delete, expected 404, got %d", w2.Code)
+	}
+}

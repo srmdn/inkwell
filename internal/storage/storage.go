@@ -82,22 +82,34 @@ func (s *Storage) Exists(slug string) bool {
 
 func parse(raw []byte) (*PostFile, error) {
 	const delim = "---"
-	content := string(raw)
 
-	// Expect content to start with ---
-	if !strings.HasPrefix(strings.TrimSpace(content), delim) {
+	// Trim only leading whitespace so trailing newlines in the body are preserved.
+	content := strings.TrimLeft(string(raw), " \t\r\n")
+
+	if !strings.HasPrefix(content, delim) {
 		return nil, fmt.Errorf("missing frontmatter delimiter")
 	}
 
-	// Find the closing ---
-	rest := strings.TrimPrefix(strings.TrimSpace(content), delim)
+	// Skip past the opening --- and its trailing newline.
+	rest := content[len(delim):]
+	if len(rest) == 0 || rest[0] != '\n' {
+		return nil, fmt.Errorf("missing frontmatter delimiter")
+	}
+	rest = rest[1:]
+
+	// Find the closing ---.
 	idx := strings.Index(rest, "\n"+delim)
 	if idx == -1 {
 		return nil, fmt.Errorf("unclosed frontmatter")
 	}
 
 	yamlPart := rest[:idx]
-	body := strings.TrimPrefix(rest[idx:], "\n"+delim)
+
+	// Skip \n--- and the blank line marshal writes before the body.
+	// marshal writes "---\n\n" so two newlines follow the closing delimiter.
+	body := rest[idx+1+len(delim):]
+	body = strings.TrimPrefix(body, "\n\n")
+	// Fallback for files with only one newline after ---.
 	body = strings.TrimPrefix(body, "\n")
 
 	var fm Frontmatter

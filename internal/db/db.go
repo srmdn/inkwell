@@ -16,6 +16,11 @@ type DB struct {
 	*sql.DB
 }
 
+// Wrap creates a DB from an existing *sql.DB. Used in tests.
+func Wrap(conn *sql.DB) *DB {
+	return &DB{conn}
+}
+
 func Open(dsn string) (*DB, error) {
 	if err := os.MkdirAll(filepath.Dir(dsn), 0755); err != nil {
 		return nil, fmt.Errorf("creating db dir: %w", err)
