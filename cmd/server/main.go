@@ -22,10 +22,19 @@ import (
 	"github.com/srmdn/inkwell/internal/rebuild"
 )
 
+// version is set at build time via -ldflags "-X main.version=v0.1.0"
+var version = "dev"
+
 func main() {
 	envFile := flag.String("env", ".env", "path to env file")
 	setup := flag.Bool("setup", false, "run first-time setup wizard")
+	showVersion := flag.Bool("version", false, "print version and exit")
 	flag.Parse()
+
+	if *showVersion {
+		fmt.Println(version)
+		os.Exit(0)
+	}
 
 	cfg, err := config.Load(*envFile)
 	if err != nil {
