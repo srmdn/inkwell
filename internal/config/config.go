@@ -17,8 +17,9 @@ type Config struct {
 	AdminPasswd string
 
 	// Theme
-	ThemeDir     string
+	ThemeDir      string
 	ThemeBuildCmd string
+	ThemeService  string // optional: systemd service to restart after build
 }
 
 func Load(envFile string) (*Config, error) {
@@ -47,6 +48,7 @@ func Load(envFile string) (*Config, error) {
 		AdminPasswd:   os.Getenv("ADMIN_PASSWORD"),
 		ThemeDir:      getEnv("THEME_DIR", "theme"),
 		ThemeBuildCmd: getEnv("THEME_BUILD_CMD", "npm run build"),
+		ThemeService:  os.Getenv("THEME_SERVICE"),
 	}, nil
 }
 

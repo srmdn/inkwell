@@ -19,6 +19,7 @@ import (
 	"github.com/srmdn/inkwell/internal/db"
 	"github.com/srmdn/inkwell/internal/handler"
 	"github.com/srmdn/inkwell/internal/middleware"
+	"github.com/srmdn/inkwell/internal/rebuild"
 )
 
 func main() {
@@ -60,6 +61,8 @@ func main() {
 	})
 
 	h := handler.New(database, cfg)
+	rb := rebuild.New(cfg.ThemeDir, cfg.ThemeBuildCmd, cfg.ThemeService)
+	h.SetRebuilder(rb)
 
 	// Public routes
 	r.Post("/api/login", h.Login)
@@ -79,6 +82,8 @@ func main() {
 			r.Post("/api/admin/posts/{slug}", h.CreatePost)
 			r.Put("/api/admin/posts/{slug}", h.UpdatePost)
 			r.Delete("/api/admin/posts/{slug}", h.DeletePost)
+			r.Post("/api/admin/rebuild", h.TriggerRebuild)
+			r.Get("/api/admin/rebuild/status", h.RebuildStatus)
 		})
 	})
 

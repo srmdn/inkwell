@@ -6,12 +6,14 @@ import (
 
 	"github.com/srmdn/inkwell/internal/config"
 	"github.com/srmdn/inkwell/internal/db"
+	"github.com/srmdn/inkwell/internal/rebuild"
 )
 
 // Handler holds shared dependencies for all HTTP handlers.
 type Handler struct {
-	db  *db.DB
-	cfg *config.Config
+	db        *db.DB
+	cfg       *config.Config
+	rebuilder *rebuild.Rebuilder
 }
 
 func New(database *db.DB, cfg *config.Config) *Handler {
