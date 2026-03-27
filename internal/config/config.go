@@ -23,6 +23,13 @@ type Config struct {
 
 	// Webhook
 	WebhookSecret string // optional: if set, enables POST /api/webhook/rebuild
+
+	// SMTP (newsletter)
+	SMTPHost     string // e.g. smtp.mailgun.org
+	SMTPPort     string // e.g. 587
+	SMTPUsername string
+	SMTPPassword string
+	SMTPFrom     string // e.g. newsletter@example.com
 }
 
 func Load(envFile string) (*Config, error) {
@@ -53,6 +60,11 @@ func Load(envFile string) (*Config, error) {
 		ThemeBuildCmd: getEnv("THEME_BUILD_CMD", "npm run build"),
 		ThemeService:  os.Getenv("THEME_SERVICE"),
 		WebhookSecret: os.Getenv("WEBHOOK_SECRET"),
+		SMTPHost:      os.Getenv("SMTP_HOST"),
+		SMTPPort:      getEnv("SMTP_PORT", "587"),
+		SMTPUsername:  os.Getenv("SMTP_USERNAME"),
+		SMTPPassword:  os.Getenv("SMTP_PASSWORD"),
+		SMTPFrom:      os.Getenv("SMTP_FROM"),
 	}, nil
 }
 

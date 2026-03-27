@@ -6,6 +6,7 @@ import (
 
 	"github.com/srmdn/foliocms/internal/config"
 	"github.com/srmdn/foliocms/internal/db"
+	"github.com/srmdn/foliocms/internal/mailer"
 	"github.com/srmdn/foliocms/internal/rebuild"
 )
 
@@ -14,10 +15,12 @@ type Handler struct {
 	db        *db.DB
 	cfg       *config.Config
 	rebuilder *rebuild.Rebuilder
+	mailer    *mailer.Mailer
 }
 
 func New(database *db.DB, cfg *config.Config) *Handler {
-	return &Handler{db: database, cfg: cfg}
+	m := mailer.New(cfg.SMTPHost, cfg.SMTPPort, cfg.SMTPUsername, cfg.SMTPPassword, cfg.SMTPFrom)
+	return &Handler{db: database, cfg: cfg, mailer: m}
 }
 
 func writeJSON(w http.ResponseWriter, status int, v any) {

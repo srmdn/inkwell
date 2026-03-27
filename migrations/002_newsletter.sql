@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS subscribers (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    email         TEXT NOT NULL UNIQUE,
+    token         TEXT NOT NULL UNIQUE,
+    subscribed_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
