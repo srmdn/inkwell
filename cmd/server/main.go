@@ -78,6 +78,7 @@ func main() {
 	r.Post("/api/logout", h.Logout)
 	r.Get("/api/posts", h.ListPosts)
 	r.Get("/api/posts/{slug}", h.GetPost)
+	r.Post("/api/webhook/rebuild", h.WebhookRebuild)
 
 	// Protected routes (JWT + CSRF)
 	r.Group(func(r chi.Router) {

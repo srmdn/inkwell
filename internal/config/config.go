@@ -20,6 +20,9 @@ type Config struct {
 	ThemeDir      string
 	ThemeBuildCmd string
 	ThemeService  string // optional: systemd service to restart after build
+
+	// Webhook
+	WebhookSecret string // optional: if set, enables POST /api/webhook/rebuild
 }
 
 func Load(envFile string) (*Config, error) {
@@ -49,6 +52,7 @@ func Load(envFile string) (*Config, error) {
 		ThemeDir:      getEnv("THEME_DIR", "theme"),
 		ThemeBuildCmd: getEnv("THEME_BUILD_CMD", "npm run build"),
 		ThemeService:  os.Getenv("THEME_SERVICE"),
+		WebhookSecret: os.Getenv("WEBHOOK_SECRET"),
 	}, nil
 }
 
