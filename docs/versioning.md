@@ -19,11 +19,13 @@ If in doubt: did you add anything new? MINOR. Did you only fix something broken?
 Tag when a stranger can clone the repo, run `--setup`, connect a theme,
 and have a working CMS. Requires:
 
-- [ ] Backend API complete
-- [ ] Default Astro theme ships and works out of the box
-- [ ] `install.sh` covers the full setup flow
-- [ ] README has real install instructions
-- [ ] Pre-built binary attached to the GitHub release
+- [x] Backend API complete
+- [x] Default Astro theme ships and works out of the box
+- [x] `install.sh` covers the full setup flow
+- [x] README has real install instructions
+- [x] Pre-built binary attached to the GitHub release
+
+**Shipped 2026-03-27**: https://github.com/srmdn/inkwell/releases/tag/v0.1.0
 
 ### `v0.x.x` — Unstable
 
