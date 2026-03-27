@@ -1,0 +1,23 @@
+CREATE TABLE IF NOT EXISTS users (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    email       TEXT NOT NULL UNIQUE,
+    passwd_hash TEXT NOT NULL,
+    created_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS posts (
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    slug         TEXT NOT NULL UNIQUE,
+    title        TEXT NOT NULL,
+    description  TEXT NOT NULL DEFAULT '',
+    tags         TEXT NOT NULL DEFAULT '',
+    draft        INTEGER NOT NULL DEFAULT 1,
+    publish_date DATETIME,
+    created_at   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS schema_migrations (
+    version    INTEGER PRIMARY KEY,
+    applied_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
