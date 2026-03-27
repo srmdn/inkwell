@@ -1,0 +1,8 @@
+# Example CODEOWNERS
+# Replace users/teams with your project maintainers.
+
+* @srmdn
+/docs/ @srmdn
+/scripts/ @srmdn
+/.github/ @srmdn
+/.gitlab/ @srmdn

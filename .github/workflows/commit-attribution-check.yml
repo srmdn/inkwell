@@ -1,0 +1,29 @@
+name: Commit Attribution Check
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+jobs:
+  check-attribution:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine commit range
+        id: range
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "range=${{ github.event.pull_request.base.sha }}..${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "range=HEAD~1..HEAD" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run attribution check
+        run: scripts/check-commit-attribution.sh "${{ steps.range.outputs.range }}"

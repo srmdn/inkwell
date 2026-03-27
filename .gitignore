@@ -1,0 +1,31 @@
+# Binary
+inkwell
+inkwell-*
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Data
+*.db
+*.db-shm
+*.db-wal
+data/
+
+# Build output
+dist/
+build/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Go
+vendor/
