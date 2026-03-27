@@ -1,0 +1,187 @@
+/* FolioCMS Admin Dashboard */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #0f1117;
+  --bg-card: #1a1d27;
+  --bg-input: #111420;
+  --border: #2a2d3a;
+  --text: #e2e8f0;
+  --text-muted: #718096;
+  --accent: #4ade80;
+  --accent-hover: #22c55e;
+  --error: #f87171;
+  --radius: 8px;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Login */
+
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 360px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2.5rem 2rem;
+}
+
+.login-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.login-subtitle {
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.login-form {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Form fields */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.field label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.field input {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 0.9375rem;
+  padding: 0.625rem 0.875rem;
+  outline: none;
+  transition: border-color 0.15s;
+  width: 100%;
+}
+
+.field input:focus {
+  border-color: var(--accent);
+}
+
+.field input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Buttons */
+
+.btn-primary {
+  background: var(--accent);
+  color: #0f1117;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  padding: 0.65rem 1.25rem;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.15s;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Error message */
+
+.error-msg {
+  color: var(--error);
+  font-size: 0.875rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(248, 113, 113, 0.08);
+  border: 1px solid rgba(248, 113, 113, 0.2);
+  border-radius: var(--radius);
+}
+
+/* Loading screen */
+
+.loading-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Page layout */
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.page h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.5rem;
+}
+
+.placeholder {
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+}

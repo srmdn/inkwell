@@ -48,9 +48,19 @@ default Astro theme. No Docker required.
 
 ## Stack
 - Backend: Go, Chi router, SQLite
-- Default theme: Astro SSR
+- Admin UI: React + Vite (source in `admin-ui/`, embedded in Go binary via `go:embed`)
+- Default theme: Astro SSR (separate repo: `foliocms-theme-default`)
 - Auth: JWT + CSRF
 - Binary: single compiled Go binary
+
+## Build (admin UI must be built before Go binary)
+```bash
+# Build admin UI and copy to embed directory
+bash scripts/build-admin.sh
+
+# Then build the Go binary
+go build -o folio ./cmd/server/
+```
 
 ## Environment: LOCAL DEV
 
@@ -65,7 +75,8 @@ default Astro theme. No Docker required.
 - Keep commits small: one logical change per commit
 
 ## Testing
-- Run before every commit: `go test ./...` (from the repo root)
+- Run before every commit: `go test ./internal/... ./cmd/...` (from the repo root)
+- `./...` picks up Go files inside `admin-ui/node_modules/` — use the explicit paths above.
 - All tests must pass before committing.
 - Write tests for new backend code in the same commit.
 

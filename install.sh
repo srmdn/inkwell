@@ -91,6 +91,18 @@ ok "Cloned folio"
 
 cd "$INSTALL_DIR"
 
+# --- build admin dashboard ---------------------------------------------------
+
+header "Building admin dashboard"
+
+info "Installing admin-ui dependencies..."
+(cd admin-ui && npm install --silent)
+info "Building admin-ui..."
+(cd admin-ui && npm run build)
+mkdir -p internal/adminui/dist
+cp -r admin-ui/dist/. internal/adminui/dist/
+ok "Admin dashboard built"
+
 # --- build binary ------------------------------------------------------------
 
 header "Building Folio binary"

@@ -15,6 +15,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
 
+	"github.com/srmdn/foliocms/internal/adminui"
 	"github.com/srmdn/foliocms/internal/config"
 	"github.com/srmdn/foliocms/internal/db"
 	"github.com/srmdn/foliocms/internal/handler"
@@ -72,6 +73,10 @@ func main() {
 	h := handler.New(database, cfg)
 	rb := rebuild.New(cfg.ThemeDir, cfg.ThemeBuildCmd, cfg.ThemeService)
 	h.SetRebuilder(rb)
+
+	// Admin SPA (embedded React build)
+	r.Handle("/admin", adminui.Handler())
+	r.Handle("/admin/*", adminui.Handler())
 
 	// Public routes
 	r.Post("/api/login", h.Login)

@@ -1,4 +1,6 @@
 # Binary
+folio
+folio-*
 inkwell
 inkwell-*
 
@@ -16,6 +18,11 @@ data/
 # Build output
 dist/
 build/
+admin-ui/dist/
+internal/adminui/dist/
+
+# Node
+admin-ui/node_modules/
 
 # OS
 .DS_Store
