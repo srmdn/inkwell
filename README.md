@@ -18,7 +18,7 @@ Most open source CMS options are either too heavy (WordPress, Ghost) or too opin
 - Git
 - Linux or macOS
 
-> **Note:** The default theme uses Astro 5 with `@astrojs/node@9`. Astro 6 support (requiring Node 22+) is planned for v0.2.0.
+> **Note:** Node.js 22 or later is required for the default theme (Astro 6).
 
 ## Install
 
