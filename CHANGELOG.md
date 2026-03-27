@@ -1,16 +1,15 @@
 # Changelog
 
-## Unreleased
+## v0.1.0 — 2026-03-27
+
+First usable release.
 
 - Backend API: post CRUD, auth (JWT + CSRF), rebuild trigger
 - Migration runner with version tracking
 - First-run setup wizard (`--setup`)
-- Versioning and release process docs
-- Theme contract spec
-- API reference
-- Configuration reference
 - `install.sh` — one-command installer
-- README with full install instructions
+- Default Astro theme (`inkwell-theme-default`)
+- Theme contract, API reference, configuration reference docs
 
 ---
 
