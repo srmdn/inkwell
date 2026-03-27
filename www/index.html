@@ -74,6 +74,34 @@
 
     .terminal-dot { border-radius: 50%; width: 12px; height: 12px; }
 
+    .terminal-body {
+      overflow-x: auto;
+      cursor: grab;
+      user-select: none;
+      scrollbar-width: thin;
+      scrollbar-color: #2a2a2a transparent;
+    }
+    .terminal-body::-webkit-scrollbar { height: 4px; }
+    .terminal-body::-webkit-scrollbar-track { background: transparent; }
+    .terminal-body::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 2px; }
+    .terminal-body.dragging { cursor: grabbing; }
+
+    .terminal-line { white-space: nowrap; display: flex; gap: 12px; min-height: 1.5em; }
+    .terminal-line .prompt { color: #4ade80; flex-shrink: 0; }
+    .terminal-line .out { color: rgba(255,255,255,0.25); flex-shrink: 0; }
+    .terminal-output { color: rgba(74,222,128,0.6); white-space: nowrap; }
+
+    .cursor {
+      display: inline-block;
+      width: 8px;
+      height: 1em;
+      background: #4ade80;
+      vertical-align: text-bottom;
+      animation: blink 1s step-end infinite;
+      border-radius: 1px;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
     .section-alt { background: #fafafa; }
 
     .badge {
@@ -154,33 +182,9 @@
           <div class="terminal-dot bg-yellow-500/70"></div>
           <div class="terminal-dot bg-green-500/70"></div>
           <span class="ml-2 text-xs text-white/20 font-mono">bash</span>
+          <span class="ml-auto text-xs text-white/10 font-mono">drag →</span>
         </div>
-        <div class="p-5 font-mono text-sm space-y-2">
-          <div class="flex gap-3">
-            <span class="text-brand-400 select-none">$</span>
-            <span class="text-white/80">curl -O https://raw.githubusercontent.com/srmdn/foliocms/main/install.sh</span>
-          </div>
-          <div class="flex gap-3">
-            <span class="text-brand-400 select-none">$</span>
-            <span class="text-white/80">bash install.sh</span>
-          </div>
-          <div class="flex gap-3 pt-1">
-            <span class="text-white/20 select-none"> </span>
-            <span class="text-brand-400/70">→  Cloning FolioCMS...</span>
-          </div>
-          <div class="flex gap-3">
-            <span class="text-white/20 select-none"> </span>
-            <span class="text-brand-400/70">✓  Binary built</span>
-          </div>
-          <div class="flex gap-3">
-            <span class="text-white/20 select-none"> </span>
-            <span class="text-brand-400/70">✓  Theme installed</span>
-          </div>
-          <div class="flex gap-3">
-            <span class="text-white/20 select-none"> </span>
-            <span class="text-white/40">Ready. Run ./folio to start.</span>
-          </div>
-        </div>
+        <div id="hero-terminal" class="terminal-body p-5 font-mono text-sm space-y-2"></div>
       </div>
     </div>
   </section>
@@ -340,15 +344,16 @@
           <div class="terminal-dot bg-red-500/70"></div>
           <div class="terminal-dot bg-yellow-500/70"></div>
           <div class="terminal-dot bg-green-500/70"></div>
+          <span class="ml-auto text-xs text-white/10 font-mono">drag →</span>
         </div>
-        <div class="p-5 font-mono text-sm space-y-2">
-          <div class="flex gap-3">
-            <span class="text-brand-400 select-none">$</span>
-            <span class="text-white/80">curl -O https://raw.githubusercontent.com/srmdn/foliocms/main/install.sh</span>
+        <div class="terminal-body p-5 font-mono text-sm space-y-2">
+          <div class="terminal-line">
+            <span class="prompt">$</span>
+            <span style="color:rgba(255,255,255,0.82)">curl -O https://raw.githubusercontent.com/srmdn/foliocms/main/install.sh</span>
           </div>
-          <div class="flex gap-3">
-            <span class="text-brand-400 select-none">$</span>
-            <span class="text-white/80">bash install.sh</span>
+          <div class="terminal-line">
+            <span class="prompt">$</span>
+            <span style="color:rgba(255,255,255,0.82)">bash install.sh</span>
           </div>
         </div>
       </div>
@@ -393,5 +398,103 @@
     </div>
   </footer>
 
+  <script>
+    // ── Typing effect ──────────────────────────────────────────────
+    const steps = [
+      { type: 'cmd', text: 'curl -O https://raw.githubusercontent.com/srmdn/foliocms/main/install.sh' },
+      { type: 'cmd', text: 'bash install.sh' },
+      { type: 'out', text: '→  Cloning FolioCMS...' },
+      { type: 'out', text: '✓  Binary built' },
+      { type: 'out', text: '✓  Theme installed' },
+      { type: 'done', text: 'Ready. Run ./folio to start.' },
+    ];
+
+    const terminal = document.getElementById('hero-terminal');
+    const CHAR_DELAY = 28;
+    const LINE_PAUSE = 320;
+    const RESTART_PAUSE = 3200;
+
+    function createLine(type) {
+      const line = document.createElement('div');
+      line.className = 'terminal-line';
+      if (type === 'cmd') {
+        const prompt = document.createElement('span');
+        prompt.className = 'prompt';
+        prompt.textContent = '$';
+        line.appendChild(prompt);
+      } else {
+        const spacer = document.createElement('span');
+        spacer.className = 'out';
+        spacer.textContent = ' ';
+        line.appendChild(spacer);
+      }
+      const text = document.createElement('span');
+      text.style.color = type === 'cmd' ? 'rgba(255,255,255,0.82)'
+                       : type === 'done' ? 'rgba(255,255,255,0.3)'
+                       : 'rgba(74,222,128,0.65)';
+      line.appendChild(text);
+      return { line, text };
+    }
+
+    function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+    async function typeText(el, str, charDelay) {
+      const cursor = document.createElement('span');
+      cursor.className = 'cursor';
+      el.parentElement.appendChild(cursor);
+      for (const ch of str) {
+        el.textContent += ch;
+        await delay(charDelay);
+      }
+      cursor.remove();
+    }
+
+    async function runAnimation() {
+      terminal.innerHTML = '';
+      for (const step of steps) {
+        const { line, text } = createLine(step.type);
+        terminal.appendChild(line);
+        if (step.type === 'cmd') {
+          await typeText(text, step.text, CHAR_DELAY);
+          await delay(LINE_PAUSE);
+        } else {
+          await delay(180);
+          await typeText(text, step.text, 18);
+          await delay(220);
+        }
+      }
+      await delay(RESTART_PAUSE);
+      runAnimation();
+    }
+
+    runAnimation();
+
+    // ── Drag to scroll ─────────────────────────────────────────────
+    document.querySelectorAll('.terminal-body').forEach(el => {
+      let isDown = false, startX, scrollLeft;
+      el.addEventListener('mousedown', e => {
+        isDown = true;
+        el.classList.add('dragging');
+        startX = e.pageX - el.offsetLeft;
+        scrollLeft = el.scrollLeft;
+      });
+      el.addEventListener('mouseleave', () => { isDown = false; el.classList.remove('dragging'); });
+      el.addEventListener('mouseup', () => { isDown = false; el.classList.remove('dragging'); });
+      el.addEventListener('mousemove', e => {
+        if (!isDown) return;
+        e.preventDefault();
+        el.scrollLeft = scrollLeft - (e.pageX - el.offsetLeft - startX);
+      });
+      // Touch support
+      let touchStartX, touchScrollLeft;
+      el.addEventListener('touchstart', e => {
+        touchStartX = e.touches[0].pageX;
+        touchScrollLeft = el.scrollLeft;
+      }, { passive: true });
+      el.addEventListener('touchmove', e => {
+        el.scrollLeft = touchScrollLeft - (e.touches[0].pageX - touchStartX);
+      }, { passive: true });
+    });
+  </script>
 </body>
 </html>
