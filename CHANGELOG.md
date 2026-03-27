@@ -9,6 +9,8 @@
 - Theme contract spec
 - API reference
 - Configuration reference
+- `install.sh` — one-command installer
+- README with full install instructions
 
 ---
 
