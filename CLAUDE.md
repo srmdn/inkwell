@@ -64,6 +64,11 @@ default Astro theme. No Docker required.
 - No Docker, no external runtime dependencies
 - Keep commits small: one logical change per commit
 
+## Testing
+- Run before every commit: `go test ./...` (from the repo root)
+- All tests must pass before committing.
+- Write tests for new backend code in the same commit.
+
 ## Do not modify without confirming
 - Database migration files
 - `.env.example` (only add keys, never remove; removing could break existing installs)
