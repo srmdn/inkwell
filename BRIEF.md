@@ -40,3 +40,11 @@ service for the Astro theme if used.
 - Multi-user / roles
 - Newsletter
 - Anything beyond a blog CMS (no portfolio sections, no link directories, etc.)
+
+## Post-v0.1 (revisit after first release)
+- Domain: check `getinkwell.com`, `inkwellcms.com`, `inkwell.dev`, `inkwell.app`
+- Landing page: static Astro site, hosted independently
+- Default Astro theme: ship as separate repo (`inkwell-theme-default`)
+- Rebuild mechanism: replace subprocess approach with webhook
+- Newsletter support
+- Consider GitHub org (`inkwell-cms`) if project grows
