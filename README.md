@@ -8,7 +8,7 @@ Most open source CMS options are either too heavy (WordPress, Ghost) or too opin
 
 - A real Markdown editor out of the box
 - A default frontend theme they can swap
-- Zero external dependencies — no PostgreSQL, no Redis, no Docker
+- Zero external dependencies: no PostgreSQL, no Redis, no Docker
 - One systemd service and done
 
 ## Requirements
@@ -52,7 +52,7 @@ cd folio
 # Start the backend API (default port 8090)
 ./folio
 
-# In a separate terminal — start the theme (default port 4321)
+# In a separate terminal: start the theme (default port 4321)
 cd theme && node dist/server/entry.mjs
 ```
 
@@ -77,11 +77,11 @@ Key variables:
 | Variable | Default | Description |
 |---|---|---|
 | `PORT` | `8090` | Backend API port |
-| `JWT_SECRET` | — | Required. Generate with `openssl rand -hex 32` |
+| `JWT_SECRET` | (none) | Required. Generate with `openssl rand -hex 32` |
 | `CONTENT_DIR` | `content/blog` | Path to Markdown content |
 | `THEME_DIR` | `theme` | Path to the theme directory |
 | `THEME_BUILD_CMD` | `npm run build` | Command to rebuild the theme |
-| `THEME_SERVICE` | — | systemd service name to restart after rebuild |
+| `THEME_SERVICE` | (none) | systemd service name to restart after rebuild |
 
 ## API
 
@@ -89,13 +89,13 @@ Full API reference: [docs/api.md](docs/api.md)
 
 ## Theme
 
-Folio ships with [foliocms-theme-default](https://github.com/srmdn/foliocms-theme-default) — an Astro SSR theme. The installer sets it up automatically.
+Folio ships with [foliocms-theme-default](https://github.com/srmdn/foliocms-theme-default), an Astro SSR theme. The installer sets it up automatically.
 
 To build a custom theme, see [docs/theme-contract.md](docs/theme-contract.md).
 
 ## Architecture
 
-- **Backend**: Go, Chi router, SQLite (`modernc.org/sqlite` — pure Go, no CGo)
+- **Backend**: Go, Chi router, SQLite (`modernc.org/sqlite`, pure Go, no CGo)
 - **Auth**: JWT (cookie + Bearer header) + stateless CSRF (HMAC-SHA256)
 - **Default theme**: Astro SSR (separate repo)
 - **Content**: Markdown files with YAML frontmatter in `content/blog/<slug>/index.md`

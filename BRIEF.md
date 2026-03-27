@@ -6,7 +6,7 @@ default Astro theme out of the box. No Docker, no external dependencies.
 
 ## Who uses it
 Solo developers and indie developers who self-host on a cheap VPS and want
-a real CMS — with an editor, a frontend, and a dashboard — without the
+a real CMS (editor, frontend, dashboard) without the
 overhead of WordPress or Ghost.
 
 ## Stack
@@ -20,16 +20,16 @@ Any Linux VPS. One systemd service for the backend. Separate optional
 service for the Astro theme if used.
 
 ## Hard requirements
-- Single Go binary — no Docker, no external runtime dependencies
-- SQLite only — no PostgreSQL or MySQL
+- Single Go binary: no Docker, no external runtime dependencies
+- SQLite only: no PostgreSQL or MySQL
 - Ships with a default Astro theme (swappable via theme contract)
 - Real Markdown editor (Milkdown) in the admin dashboard
 - Theme contract: any frontend that reads `content/blog/<slug>/index.md`
   and calls the REST API works as a theme
 
 ## I don't care about (AI can decide)
-- Folder structure — follow Go and Astro conventions
-- Dashboard visual design — clean and minimal is enough
+- Folder structure: follow Go and Astro conventions
+- Dashboard visual design: clean and minimal is enough
 - API versioning scheme
 
 ## Out of scope (not in this version)

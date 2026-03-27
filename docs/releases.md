@@ -89,7 +89,7 @@ EOF
 
 ## Breaking Changes (if any)
 
-- Renamed env var FOO to BAR — update your .env
+- Renamed env var FOO to BAR: update your .env
 
 ## How to Upgrade
 
@@ -114,4 +114,4 @@ git log v0.1.0..v0.2.0 --oneline
 # paste to AI: "draft release notes from these commits"
 ```
 
-You review and edit before publishing. You publish — never automate.
+You review and edit before publishing. You publish; never automate.

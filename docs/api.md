@@ -140,7 +140,7 @@ Requires: valid `token` cookie/header **and** `X-CSRF-Token` header.
 
 List all posts including drafts.
 
-**Response `200`** — same shape as `GET /api/posts` but includes drafts.
+**Response `200`**: same shape as `GET /api/posts` but includes drafts.
 
 ---
 
@@ -148,7 +148,7 @@ List all posts including drafts.
 
 Get a single post regardless of draft status, including body.
 
-**Response `200`** — same shape as `GET /api/posts/{slug}`.
+**Response `200`**: same shape as `GET /api/posts/{slug}`.
 
 **Errors**: `404` post not found
 
@@ -191,7 +191,7 @@ Create a new post. The slug is set in the URL path.
 
 Update an existing post. Replaces all fields.
 
-**Request body** — same shape as `POST /api/admin/posts/{slug}`
+**Request body**: same shape as `POST /api/admin/posts/{slug}`
 
 **Response `204`** No content.
 
@@ -211,7 +211,7 @@ Delete a post and its content files from disk.
 
 ### `POST /api/admin/rebuild`
 
-Trigger an async theme rebuild. Returns immediately — poll status to track
+Trigger an async theme rebuild. Returns immediately; poll status to track
 progress.
 
 **Response `202`** Build started.
@@ -240,4 +240,4 @@ Get the current rebuild status.
 | `idle` | No build has run yet |
 | `running` | Build in progress |
 | `success` | Last build succeeded |
-| `failed` | Last build failed — see `error` field |
+| `failed` | Last build failed; see `error` field |

@@ -45,7 +45,7 @@ The database directory is created automatically if it does not exist.
 
 ## Admin Setup
 
-These variables are only used during `--setup`. They are optional — if not
+These variables are only used during `--setup`. They are optional; if not
 set, the setup wizard will prompt interactively.
 
 | Variable | Default | Description |
@@ -88,7 +88,7 @@ THEME_SERVICE=
 
 - Never commit your `.env` file. It is gitignored by default.
 - `.env.example` is committed and lists all variable names with empty or
-  default values. Add new variables there when introducing them — do not
+  default values. Add new variables there when introducing them; do not
   remove existing ones, as that would break existing installs.
 - The binary loads `.env` by default. Use `--env /path/to/.env` to specify
   a different file.

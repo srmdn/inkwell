@@ -6,7 +6,7 @@ Folio follows Semantic Versioning: `vMAJOR.MINOR.PATCH`
 
 | Segment | Bump when... | Example |
 |---------|-------------|---------|
-| `MAJOR` | Breaking change — config keys renamed, API routes changed, install steps change | `v1.0.0` → `v2.0.0` |
+| `MAJOR` | Breaking change (config keys renamed, API routes changed, install steps change) | `v1.0.0` → `v2.0.0` |
 | `MINOR` | New feature, nothing existing breaks | `v0.1.0` → `v0.2.0` |
 | `PATCH` | Bug fix only, nothing existing breaks | `v0.1.0` → `v0.1.1` |
 
@@ -14,7 +14,7 @@ If in doubt: did you add anything new? MINOR. Did you only fix something broken?
 
 ## Milestone Definitions
 
-### `v0.1.0` — First usable release
+### `v0.1.0` - First usable release
 
 Tag when a stranger can clone the repo, run `--setup`, connect a theme,
 and have a working CMS. Requires:
@@ -27,12 +27,12 @@ and have a working CMS. Requires:
 
 **Shipped 2026-03-27**: https://github.com/srmdn/foliocms/releases/tag/v0.1.0
 
-### `v0.x.x` — Unstable
+### `v0.x.x` - Unstable
 
 API and config can still change freely between minor versions.
 Document breaking changes clearly in CHANGELOG.
 
-### `v1.0.0` — Stable
+### `v1.0.0` - Stable
 
 Cut when:
 - Running in real-world use
@@ -63,12 +63,12 @@ Always tag **after** committing CHANGELOG. The tag points to the final release c
 Keep `CHANGELOG.md` in the repo root, newest version at top. One line per change:
 
 ```markdown
-## v0.2.0 — 2026-04-15
+## v0.2.0 (2026-04-15)
 
 - Added media upload support
 - Fixed slug validation for unicode characters
 
-## v0.1.0 — 2026-03-27
+## v0.1.0 (2026-03-27)
 
 - Initial release
 ```
@@ -83,6 +83,6 @@ git log v0.1.0..v0.2.0 --oneline
 ```
 
 Rules:
-- You decide the version number — AI does not bump versions
-- You review the draft before publishing
-- You run `git tag` and publish the release — never automate this
+- You decide the version number. AI does not bump versions.
+- You review the draft before publishing.
+- You run `git tag` and publish the release. Never automate this.

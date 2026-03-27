@@ -18,8 +18,8 @@ A theme is any frontend that:
 4. Optionally runs as a service the backend can restart after a build
 
 Folio ships with one default theme (`foliocms-theme-default`, Astro SSR).
-You can replace it with any framework — Astro, Next.js, SvelteKit, plain HTML,
-or anything else — as long as it follows this contract.
+You can replace it with any framework (Astro, Next.js, SvelteKit, plain HTML,
+or anything else) as long as it follows this contract.
 
 ---
 
@@ -72,8 +72,8 @@ be quoted, or YAML parsing will fail.
 ### Theme Responsibility
 
 - Read `index.md` files at build time (static) or request time (SSR)
-- Respect `draft: true` — do not render draft posts on public pages
-- Respect `publishDate` — do not render posts with a future publish date
+- Respect `draft: true`: do not render draft posts on public pages
+- Respect `publishDate`: do not render posts with a future publish date
 - The hero image (`hero.webp`) is optional; handle its absence gracefully
 
 ---
@@ -117,7 +117,7 @@ Configured by the theme. Typically the same origin or a configured API URL.
 
 ### Static Themes
 
-Static themes do not need to call the API at all — they can read everything
+Static themes do not need to call the API at all. They can read everything
 from the filesystem at build time. The API is available for SSR themes that
 need runtime data.
 
@@ -135,9 +135,9 @@ THEME_DIR=theme
 THEME_BUILD_CMD=npm run build
 ```
 
-- `THEME_DIR` — directory where the build command is executed (relative to
+- `THEME_DIR`: directory where the build command is executed (relative to
   the Folio binary, or absolute)
-- `THEME_BUILD_CMD` — the command to run. Executed as a subprocess with
+- `THEME_BUILD_CMD`: the command to run. Executed as a subprocess with
   `THEME_DIR` as the working directory.
 
 ### What the Backend Does

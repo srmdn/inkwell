@@ -54,13 +54,16 @@ default Astro theme. No Docker required.
 
 ## Environment: LOCAL DEV
 
+## Writing Conventions
+- No em dashes (`—`) in commit messages, docs, README, release notes, or About section. Use a colon, semicolon, or rewrite the sentence.
+
 ## Conventions
-- Secrets in `.env` — never committed
+- Secrets in `.env`: never committed
 - `.env.example` committed with all variable names, no real values
 - Build output gitignored
 - No Docker, no external runtime dependencies
-- Keep commits small — one logical change per commit
+- Keep commits small: one logical change per commit
 
 ## Do not modify without confirming
 - Database migration files
-- `.env.example` (only add keys, never remove — could break existing installs)
+- `.env.example` (only add keys, never remove; removing could break existing installs)
