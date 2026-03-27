@@ -17,6 +17,8 @@ import (
 
 	"github.com/srmdn/inkwell/internal/config"
 	"github.com/srmdn/inkwell/internal/db"
+	"github.com/srmdn/inkwell/internal/handler"
+	"github.com/srmdn/inkwell/internal/middleware"
 )
 
 func main() {
@@ -57,7 +59,28 @@ func main() {
 		w.Write([]byte("ok"))
 	})
 
-	// TODO: mount route groups (auth, posts, admin)
+	h := handler.New(database, cfg)
+
+	// Public routes
+	r.Post("/api/login", h.Login)
+	r.Post("/api/logout", h.Logout)
+	r.Get("/api/posts", h.ListPosts)
+	r.Get("/api/posts/{slug}", h.GetPost)
+
+	// Protected routes (JWT + CSRF)
+	r.Group(func(r chi.Router) {
+		r.Use(middleware.Authenticate(cfg.JWTSecret))
+		r.Get("/api/csrf-token", h.GetCSRFToken)
+
+		r.Group(func(r chi.Router) {
+			r.Use(middleware.VerifyCSRF(cfg.JWTSecret))
+			r.Get("/api/admin/posts", h.ListAllPosts)
+			r.Get("/api/admin/posts/{slug}", h.GetAdminPost)
+			r.Post("/api/admin/posts/{slug}", h.CreatePost)
+			r.Put("/api/admin/posts/{slug}", h.UpdatePost)
+			r.Delete("/api/admin/posts/{slug}", h.DeletePost)
+		})
+	})
 
 	srv := &http.Server{
 		Addr:         ":" + cfg.Port,
