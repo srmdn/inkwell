@@ -60,6 +60,6 @@ long-term and can replace this in a future version without breaking the API.
 
 ## Follow-up Actions
 
-- [ ] Create `inkwell-theme-default` repo (separate, Astro SSR)
+- [x] Create `inkwell-theme-default` repo (separate, Astro SSR)
 - [x] Write migration runner in `internal/db/`
 - [ ] Document `--setup` flow in README
