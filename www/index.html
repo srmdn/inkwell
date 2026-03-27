@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FolioCMS — The self-hosted CMS that stays out of your way</title>
+  <meta name="description" content="A lightweight, self-hostable CMS. Single Go binary, SQLite, no Docker. Ships with a beautiful Astro theme." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Instrument Sans', 'system-ui', 'sans-serif'],
+            mono: ['DM Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50:  '#f0fdf4',
+              100: '#dcfce7',
+              400: '#4ade80',
+              500: '#22c55e',
+              600: '#16a34a',
+            },
+            dark: {
+              900: '#080808',
+              800: '#0f0f0f',
+              700: '#1a1a1a',
+              600: '#252525',
+              500: '#333333',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #4ade80 0%, #22c55e 50%, #86efac 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-glow {
+      background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(34,197,94,0.15), transparent);
+    }
+
+    .feature-card {
+      background: linear-gradient(135deg, #141414 0%, #0f0f0f 100%);
+      border: 1px solid #1f1f1f;
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .feature-card:hover {
+      border-color: #22c55e30;
+      transform: translateY(-2px);
+    }
+
+    .terminal {
+      background: #0a0a0a;
+      border: 1px solid #1f1f1f;
+    }
+
+    .terminal-dot { border-radius: 50%; width: 12px; height: 12px; }
+
+    .section-alt { background: #fafafa; }
+
+    .badge {
+      background: rgba(34,197,94,0.1);
+      border: 1px solid rgba(34,197,94,0.2);
+    }
+  </style>
+</head>
+<body class="font-sans bg-dark-900 text-white antialiased">
+
+  <!-- NAV -->
+  <nav class="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-dark-900/80 backdrop-blur-md">
+    <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-2 font-semibold text-lg tracking-tight">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="24" height="24" rx="6" fill="#22c55e"/>
+          <path d="M7 8h10M7 12h7M7 16h5" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        FolioCMS
+      </a>
+
+      <div class="hidden md:flex items-center gap-8 text-sm text-white/60">
+        <a href="#features" class="hover:text-white transition-colors">Features</a>
+        <a href="#install" class="hover:text-white transition-colors">Install</a>
+        <a href="https://github.com/srmdn/foliocms" target="_blank" rel="noopener" class="hover:text-white transition-colors">Docs</a>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a href="https://github.com/srmdn/foliocms" target="_blank" rel="noopener"
+           class="hidden md:flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.604-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0 1 12 6.836c.85.004 1.705.114 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.741 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+          GitHub
+        </a>
+        <a href="#install"
+           class="text-sm font-medium px-4 py-2 rounded-lg bg-brand-500 hover:bg-brand-600 text-white transition-colors">
+          Get Started
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero-glow pt-32 pb-24 px-6">
+    <div class="max-w-4xl mx-auto text-center">
+
+      <div class="inline-flex items-center gap-2 badge rounded-full px-4 py-1.5 text-sm text-brand-400 font-medium mb-8">
+        <span class="w-1.5 h-1.5 rounded-full bg-brand-400 animate-pulse"></span>
+        v0.1.0 — Open Source & MIT Licensed
+      </div>
+
+      <h1 class="text-5xl md:text-7xl font-bold tracking-tight leading-tight mb-6">
+        The self-hosted CMS<br />
+        <span class="gradient-text">that stays out of your way</span>
+      </h1>
+
+      <p class="text-lg md:text-xl text-white/50 max-w-2xl mx-auto mb-10 leading-relaxed">
+        One binary. One database file. No Docker, no cloud accounts, no vendor lock-in.
+        Write posts, publish instantly, own your data forever.
+      </p>
+
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+        <a href="#install"
+           class="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 bg-brand-500 hover:bg-brand-600 text-white font-semibold rounded-xl transition-colors text-base">
+          Install in 60 seconds
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="https://github.com/srmdn/foliocms" target="_blank" rel="noopener"
+           class="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 bg-white/5 hover:bg-white/10 text-white font-medium rounded-xl transition-colors border border-white/10 text-base">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.604-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0 1 12 6.836c.85.004 1.705.114 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.741 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+          View on GitHub
+        </a>
+      </div>
+
+      <!-- Terminal install preview -->
+      <div class="terminal rounded-2xl overflow-hidden max-w-xl mx-auto text-left shadow-2xl shadow-black/50">
+        <div class="flex items-center gap-2 px-4 py-3 border-b border-white/5">
+          <div class="terminal-dot bg-red-500/70"></div>
+          <div class="terminal-dot bg-yellow-500/70"></div>
+          <div class="terminal-dot bg-green-500/70"></div>
+          <span class="ml-2 text-xs text-white/20 font-mono">bash</span>
+        </div>
+        <div class="p-5 font-mono text-sm space-y-2">
+          <div class="flex gap-3">
+            <span class="text-brand-400 select-none">$</span>
+            <span class="text-white/80">curl -O https://raw.githubusercontent.com/srmdn/foliocms/main/install.sh</span>
+          </div>
+          <div class="flex gap-3">
+            <span class="text-brand-400 select-none">$</span>
+            <span class="text-white/80">bash install.sh</span>
+          </div>
+          <div class="flex gap-3 pt-1">
+            <span class="text-white/20 select-none"> </span>
+            <span class="text-brand-400/70">→  Cloning FolioCMS...</span>
+          </div>
+          <div class="flex gap-3">
+            <span class="text-white/20 select-none"> </span>
+            <span class="text-brand-400/70">✓  Binary built</span>
+          </div>
+          <div class="flex gap-3">
+            <span class="text-white/20 select-none"> </span>
+            <span class="text-brand-400/70">✓  Theme installed</span>
+          </div>
+          <div class="flex gap-3">
+            <span class="text-white/20 select-none"> </span>
+            <span class="text-white/40">Ready. Run ./folio to start.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS STRIP -->
+  <div class="border-y border-white/5 bg-dark-800">
+    <div class="max-w-4xl mx-auto px-6 py-10 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+      <div>
+        <div class="text-3xl font-bold text-white mb-1">1</div>
+        <div class="text-sm text-white/40">Binary to run</div>
+      </div>
+      <div>
+        <div class="text-3xl font-bold text-white mb-1">0</div>
+        <div class="text-sm text-white/40">Docker containers</div>
+      </div>
+      <div>
+        <div class="text-3xl font-bold text-white mb-1">MIT</div>
+        <div class="text-sm text-white/40">Licensed</div>
+      </div>
+      <div>
+        <div class="text-3xl font-bold text-white mb-1">∞</div>
+        <div class="text-sm text-white/40">Posts, forever free</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <section id="features" class="py-24 px-6 bg-dark-900">
+    <div class="max-w-6xl mx-auto">
+
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-5xl font-bold tracking-tight mb-4">
+          Everything you need.<br />Nothing you don't.
+        </h2>
+        <p class="text-white/40 text-lg max-w-xl mx-auto">
+          Built for developers and writers who want full control without the operational overhead.
+        </p>
+      </div>
+
+      <!-- Feature Grid -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+        <!-- 1 -->
+        <div class="feature-card rounded-2xl p-7">
+          <div class="w-11 h-11 rounded-xl bg-brand-500/10 flex items-center justify-center mb-5">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.8" stroke-linecap="round"><path d="M4 17l6-6-6-6"/><path d="M12 19h8"/></svg>
+          </div>
+          <h3 class="text-lg font-semibold mb-2">Single Go Binary</h3>
+          <p class="text-white/40 text-sm leading-relaxed">
+            No runtime, no dependencies. Download or build one binary and run it. That's your entire backend.
+          </p>
+        </div>
+
+        <!-- 2 -->
+        <div class="feature-card rounded-2xl p-7">
+          <div class="w-11 h-11 rounded-xl bg-brand-500/10 flex items-center justify-center mb-5">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.8" stroke-linecap="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+          </div>
+          <h3 class="text-lg font-semibold mb-2">SQLite — Your Data</h3>
+          <p class="text-white/40 text-sm leading-relaxed">
+            One database file on your server. Copy it to back up. No separate DB server to manage or pay for.
+          </p>
+        </div>
+
+        <!-- 3 -->
+        <div class="feature-card rounded-2xl p-7">
+          <div class="w-11 h-11 rounded-xl bg-brand-500/10 flex items-center justify-center mb-5">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.8" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </div>
+          <h3 class="text-lg font-semibold mb-2">Markdown First</h3>
+          <p class="text-white/40 text-sm leading-relaxed">
+            Write posts in Markdown with YAML frontmatter. Store them as plain files. No proprietary format, ever.
+          </p>
+        </div>
+
+        <!-- 4 -->
+        <div class="feature-card rounded-2xl p-7">
+          <div class="w-11 h-11 rounded-xl bg-brand-500/10 flex items-center justify-center mb-5">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          </div>
+          <h3 class="text-lg font-semibold mb-2">Ships with a Theme</h3>
+          <p class="text-white/40 text-sm leading-relaxed">
+            The default Astro 6 theme is clean, fast, and SSR-ready. Swap it out or build your own from the theme contract.
+          </p>
+        </div>
+
+        <!-- 5 -->
+        <div class="feature-card rounded-2xl p-7">
+          <div class="w-11 h-11 rounded-xl bg-brand-500/10 flex items-center justify-center mb-5">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.8" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3 class="text-lg font-semibold mb-2">JWT Auth + CSRF</h3>
+          <p class="text-white/40 text-sm leading-relaxed">
+            Stateless JWT authentication with HMAC-based CSRF protection. Secure by default, no sessions to manage.
+          </p>
+        </div>
+
+        <!-- 6 -->
+        <div class="feature-card rounded-2xl p-7">
+          <div class="w-11 h-11 rounded-xl bg-brand-500/10 flex items-center justify-center mb-5">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M8 12l2 2 4-4"/></svg>
+          </div>
+          <h3 class="text-lg font-semibold mb-2">Open Source, MIT</h3>
+          <p class="text-white/40 text-sm leading-relaxed">
+            Read the code, fork it, modify it. No licence fees, no usage caps, no cloud dependency. Yours to keep.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="py-24 px-6 bg-dark-800">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-5xl font-bold tracking-tight mb-4">
+          Simple by design
+        </h2>
+        <p class="text-white/40 text-lg">
+          No YAML config files. No cloud dashboard. Just run and write.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="text-center p-8">
+          <div class="w-14 h-14 rounded-2xl bg-dark-700 border border-white/5 flex items-center justify-center mx-auto mb-5 text-2xl font-bold text-brand-400">1</div>
+          <h3 class="font-semibold text-lg mb-2">Install</h3>
+          <p class="text-white/40 text-sm leading-relaxed">Run <code class="font-mono text-brand-400/80 text-xs">install.sh</code>. It clones, builds the binary, installs the theme, and walks you through setup.</p>
+        </div>
+        <div class="text-center p-8">
+          <div class="w-14 h-14 rounded-2xl bg-dark-700 border border-white/5 flex items-center justify-center mx-auto mb-5 text-2xl font-bold text-brand-400">2</div>
+          <h3 class="font-semibold text-lg mb-2">Run</h3>
+          <p class="text-white/40 text-sm leading-relaxed">Start the binary and the theme server. Use nginx as a reverse proxy. No special ops knowledge needed.</p>
+        </div>
+        <div class="text-center p-8">
+          <div class="w-14 h-14 rounded-2xl bg-dark-700 border border-white/5 flex items-center justify-center mx-auto mb-5 text-2xl font-bold text-brand-400">3</div>
+          <h3 class="font-semibold text-lg mb-2">Write</h3>
+          <p class="text-white/40 text-sm leading-relaxed">Log in to the dashboard, write a post in Markdown, hit publish. Done. Your blog is live.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSTALL CTA -->
+  <section id="install" class="py-24 px-6 bg-dark-900">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-3xl md:text-5xl font-bold tracking-tight mb-4">
+        Ready to own your content?
+      </h2>
+      <p class="text-white/40 text-lg mb-10">
+        One command. Your server. Your data. No credit card, no account.
+      </p>
+
+      <div class="terminal rounded-2xl overflow-hidden max-w-lg mx-auto text-left mb-8 shadow-2xl shadow-black/50">
+        <div class="flex items-center gap-2 px-4 py-3 border-b border-white/5">
+          <div class="terminal-dot bg-red-500/70"></div>
+          <div class="terminal-dot bg-yellow-500/70"></div>
+          <div class="terminal-dot bg-green-500/70"></div>
+        </div>
+        <div class="p-5 font-mono text-sm space-y-2">
+          <div class="flex gap-3">
+            <span class="text-brand-400 select-none">$</span>
+            <span class="text-white/80">curl -O https://raw.githubusercontent.com/srmdn/foliocms/main/install.sh</span>
+          </div>
+          <div class="flex gap-3">
+            <span class="text-brand-400 select-none">$</span>
+            <span class="text-white/80">bash install.sh</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="https://github.com/srmdn/foliocms" target="_blank" rel="noopener"
+           class="flex items-center justify-center gap-2 px-7 py-3.5 bg-brand-500 hover:bg-brand-600 text-white font-semibold rounded-xl transition-colors">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.604-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0 1 12 6.836c.85.004 1.705.114 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.741 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+          View on GitHub
+        </a>
+        <a href="https://github.com/srmdn/foliocms/releases" target="_blank" rel="noopener"
+           class="flex items-center justify-center gap-2 px-7 py-3.5 bg-white/5 hover:bg-white/10 text-white font-medium rounded-xl transition-colors border border-white/10">
+          Download binary
+        </a>
+      </div>
+
+      <p class="text-white/20 text-sm mt-6">Requires Go 1.21+, Node.js 22+, Git — Linux or macOS</p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-white/5 bg-dark-800 py-12 px-6">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="flex items-center gap-2 font-semibold text-white/80">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="24" height="24" rx="6" fill="#22c55e"/>
+            <path d="M7 8h10M7 12h7M7 16h5" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          FolioCMS
+        </div>
+
+        <div class="flex items-center gap-8 text-sm text-white/30">
+          <a href="https://github.com/srmdn/foliocms" target="_blank" rel="noopener" class="hover:text-white/60 transition-colors">GitHub</a>
+          <a href="https://github.com/srmdn/foliocms-theme-default" target="_blank" rel="noopener" class="hover:text-white/60 transition-colors">Default Theme</a>
+          <a href="https://github.com/srmdn/foliocms/blob/main/docs/theme-contract.md" target="_blank" rel="noopener" class="hover:text-white/60 transition-colors">Theme Contract</a>
+          <a href="https://github.com/srmdn/foliocms/blob/main/LICENSE" target="_blank" rel="noopener" class="hover:text-white/60 transition-colors">MIT License</a>
+        </div>
+
+        <p class="text-sm text-white/20">v0.1.0 · Open Source</p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
