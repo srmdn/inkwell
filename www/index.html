@@ -6,6 +6,16 @@
   <title>FolioCMS — The self-hosted CMS that stays out of your way</title>
   <meta name="description" content="A lightweight, self-hostable CMS. Single Go binary, SQLite, no Docker. Ships with a beautiful Astro theme." />
 
+  <!-- OG / Social -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://foliocms.com/" />
+  <meta property="og:title" content="FolioCMS — The self-hosted CMS that stays out of your way" />
+  <meta property="og:description" content="One binary. One database file. No Docker, no cloud accounts, no vendor lock-in. Write posts, publish instantly, own your data forever." />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="FolioCMS — The self-hosted CMS that stays out of your way" />
+  <meta name="twitter:description" content="One binary. One database file. No Docker, no cloud accounts, no vendor lock-in." />
+  <link rel="canonical" href="https://foliocms.com/" />
+
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -136,10 +146,25 @@
           GitHub
         </a>
         <a href="#install"
-           class="text-sm font-medium px-4 py-2 rounded-lg bg-brand-500 hover:bg-brand-600 text-white transition-colors">
+           class="hidden md:block text-sm font-medium px-4 py-2 rounded-lg bg-brand-500 hover:bg-brand-600 text-white transition-colors">
           Get Started
         </a>
+        <!-- Hamburger -->
+        <button id="nav-toggle" class="md:hidden flex flex-col justify-center items-center w-9 h-9 gap-1.5 rounded-lg hover:bg-white/5 transition-colors" aria-label="Toggle menu">
+          <span class="hamburger-line block w-5 h-0.5 bg-white/70 transition-all duration-200"></span>
+          <span class="hamburger-line block w-5 h-0.5 bg-white/70 transition-all duration-200"></span>
+          <span class="hamburger-line block w-5 h-0.5 bg-white/70 transition-all duration-200"></span>
+        </button>
       </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="hidden md:hidden border-t border-white/5 bg-dark-900/95 px-6 py-4 flex flex-col gap-1">
+      <a href="#features" class="mobile-nav-link py-3 text-sm text-white/60 hover:text-white transition-colors border-b border-white/5">Features</a>
+      <a href="#install" class="mobile-nav-link py-3 text-sm text-white/60 hover:text-white transition-colors border-b border-white/5">Install</a>
+      <a href="https://github.com/srmdn/foliocms" target="_blank" rel="noopener" class="mobile-nav-link py-3 text-sm text-white/60 hover:text-white transition-colors border-b border-white/5">Docs</a>
+      <a href="https://github.com/srmdn/foliocms" target="_blank" rel="noopener" class="mobile-nav-link py-3 text-sm text-white/60 hover:text-white transition-colors border-b border-white/5">GitHub</a>
+      <a href="#install" class="mobile-nav-link mt-2 py-3 text-center text-sm font-medium rounded-lg bg-brand-500 hover:bg-brand-600 text-white transition-colors">Get Started</a>
     </div>
   </nav>
 
@@ -399,6 +424,28 @@
   </footer>
 
   <script>
+    // ── Mobile nav ────────────────────────────────────────────────
+    const navToggle = document.getElementById('nav-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    navToggle.addEventListener('click', () => {
+      const open = mobileMenu.classList.toggle('hidden') === false;
+      const lines = navToggle.querySelectorAll('.hamburger-line');
+      if (open) {
+        lines[0].style.transform = 'translateY(8px) rotate(45deg)';
+        lines[1].style.opacity = '0';
+        lines[2].style.transform = 'translateY(-8px) rotate(-45deg)';
+      } else {
+        lines.forEach(l => { l.style.transform = ''; l.style.opacity = ''; });
+      }
+    });
+    document.querySelectorAll('.mobile-nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+        const lines = navToggle.querySelectorAll('.hamburger-line');
+        lines.forEach(l => { l.style.transform = ''; l.style.opacity = ''; });
+      });
+    });
+
     // ── Typing effect ──────────────────────────────────────────────
     const steps = [
       { type: 'cmd', text: 'curl -O https://raw.githubusercontent.com/srmdn/foliocms/main/install.sh' },
