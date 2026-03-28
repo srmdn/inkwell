@@ -689,6 +689,15 @@ body {
   gap: 1rem;
 }
 
+@media (max-width: 1023px) {
+  .editor-layout {
+    flex-direction: column;
+  }
+  .editor-meta {
+    width: 100%;
+  }
+}
+
 .meta-section {
   background: var(--bg-card);
   border: 1px solid var(--border);
