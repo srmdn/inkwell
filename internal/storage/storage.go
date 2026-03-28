@@ -2,6 +2,7 @@ package storage
 
 import (
 	"bytes"
+	"encoding/base64"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -18,6 +19,7 @@ type Frontmatter struct {
 	PublishDate string   `yaml:"publishDate"`
 	Draft       bool     `yaml:"draft"`
 	Tags        []string `yaml:"tags"`
+	HeroImage   string   `yaml:"heroImage,omitempty"`
 }
 
 // PostFile represents a post file on disk.
@@ -78,6 +80,96 @@ func (s *Storage) Delete(slug string) error {
 func (s *Storage) Exists(slug string) bool {
 	_, err := os.Stat(s.PostPath(slug))
 	return err == nil
+}
+
+// Rename renames a post directory from oldSlug to newSlug (all assets move with it).
+func (s *Storage) Rename(oldSlug, newSlug string) error {
+	oldDir := s.PostDir(oldSlug)
+	newDir := s.PostDir(newSlug)
+	if _, err := os.Stat(oldDir); os.IsNotExist(err) {
+		return fmt.Errorf("post %q not found", oldSlug)
+	}
+	if _, err := os.Stat(newDir); err == nil {
+		return fmt.Errorf("slug %q already taken", newSlug)
+	}
+	return os.Rename(oldDir, newDir)
+}
+
+// SaveHeroImage decodes a base64 data URI and writes the image to the post directory.
+// Returns the relative path (e.g. "./hero.jpg") to store in frontmatter.
+func (s *Storage) SaveHeroImage(slug, dataURI string) (string, error) {
+	if !strings.HasPrefix(dataURI, "data:") {
+		return "", fmt.Errorf("not a data URI")
+	}
+	semi := strings.Index(dataURI, ";")
+	comma := strings.Index(dataURI, ",")
+	if semi == -1 || comma == -1 || comma < semi {
+		return "", fmt.Errorf("invalid data URI format")
+	}
+	mimeType := dataURI[5:semi]
+	imgData, err := base64.StdEncoding.DecodeString(dataURI[comma+1:])
+	if err != nil {
+		return "", fmt.Errorf("decoding image: %w", err)
+	}
+	ext := heroImageExt(mimeType)
+	postDir := s.PostDir(slug)
+	if err := os.MkdirAll(postDir, 0755); err != nil {
+		return "", fmt.Errorf("creating post dir: %w", err)
+	}
+	// Remove any stale hero files before writing the new one.
+	for _, e := range []string{".webp", ".jpg", ".png", ".gif"} {
+		os.Remove(filepath.Join(postDir, "hero"+e))
+	}
+	filename := "hero" + ext
+	if err := os.WriteFile(filepath.Join(postDir, filename), imgData, 0644); err != nil {
+		return "", fmt.Errorf("writing hero image: %w", err)
+	}
+	return "./" + filename, nil
+}
+
+// ReadHeroImageAsDataURI reads a local hero image file and returns it as a base64 data URI.
+// If heroPath is not a relative local path it is returned unchanged.
+func (s *Storage) ReadHeroImageAsDataURI(slug, heroPath string) (string, error) {
+	if !strings.HasPrefix(heroPath, "./") {
+		return heroPath, nil
+	}
+	fullPath := filepath.Join(s.PostDir(slug), strings.TrimPrefix(heroPath, "./"))
+	data, err := os.ReadFile(fullPath)
+	if err != nil {
+		return "", fmt.Errorf("reading hero image: %w", err)
+	}
+	ext := strings.ToLower(filepath.Ext(fullPath))
+	return "data:" + extToMime(ext) + ";base64," + base64.StdEncoding.EncodeToString(data), nil
+}
+
+func heroImageExt(mimeType string) string {
+	switch mimeType {
+	case "image/webp":
+		return ".webp"
+	case "image/jpeg", "image/jpg":
+		return ".jpg"
+	case "image/png":
+		return ".png"
+	case "image/gif":
+		return ".gif"
+	default:
+		return ".jpg"
+	}
+}
+
+func extToMime(ext string) string {
+	switch ext {
+	case ".webp":
+		return "image/webp"
+	case ".jpg", ".jpeg":
+		return "image/jpeg"
+	case ".png":
+		return "image/png"
+	case ".gif":
+		return "image/gif"
+	default:
+		return "image/jpeg"
+	}
 }
 
 func parse(raw []byte) (*PostFile, error) {

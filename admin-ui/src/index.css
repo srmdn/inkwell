@@ -472,3 +472,282 @@ body {
   border-radius: var(--radius);
   margin-bottom: 1rem;
 }
+
+/* ── Post editor layout ───────────────────────────────────── */
+
+.page-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.page-header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.back-link {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.12s;
+}
+
+.back-link:hover { color: var(--text); }
+
+.save-success {
+  font-size: 0.8125rem;
+  color: var(--accent);
+}
+
+.save-error {
+  font-size: 0.8125rem;
+  color: var(--error);
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.editor-layout {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.editor-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.editor-meta {
+  width: 280px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.meta-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.field textarea {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 0.875rem;
+  padding: 0.5rem 0.75rem;
+  outline: none;
+  transition: border-color 0.15s;
+  width: 100%;
+  resize: vertical;
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+.field textarea:focus { border-color: var(--accent); }
+
+.field input[type="date"] {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 0.9375rem;
+  padding: 0.625rem 0.875rem;
+  outline: none;
+  transition: border-color 0.15s;
+  width: 100%;
+  font-family: inherit;
+}
+
+.field input[type="date"]:focus { border-color: var(--accent); }
+
+.field-hint {
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+  margin-top: 0.2rem;
+  display: block;
+}
+
+.field-row {
+  flex-direction: row;
+  align-items: center;
+}
+
+.label-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.label-inline input[type="checkbox"] {
+  accent-color: var(--accent);
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+}
+
+/* ── Hero image ───────────────────────────────────────────── */
+
+.hero-preview {
+  position: relative;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.hero-preview img {
+  width: 100%;
+  display: block;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+}
+
+.hero-remove {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+}
+
+.hero-upload-label {
+  display: block;
+  cursor: pointer;
+}
+
+.hero-upload-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.625rem;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.hero-upload-label:hover .hero-upload-btn {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ── Milkdown editor ──────────────────────────────────────── */
+
+.editor-wrap {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--bg-card);
+}
+
+.editor-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0.375rem 0.5rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-card);
+  flex-wrap: wrap;
+}
+
+.tb-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 0.375rem;
+  border: none;
+  background: none;
+  border-radius: 4px;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+  font-family: inherit;
+}
+
+.tb-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+}
+
+.tb-sep {
+  width: 1px;
+  height: 18px;
+  background: var(--border);
+  margin: 0 0.25rem;
+}
+
+.editor-body {
+  min-height: 420px;
+  padding: 1.25rem 1.5rem;
+  color: var(--text);
+  font-size: 0.9375rem;
+  line-height: 1.75;
+}
+
+/* Milkdown ProseMirror content styles */
+.editor-body .milkdown { outline: none; }
+.editor-body .milkdown h1 { font-size: 1.75rem; font-weight: 700; margin: 1.5rem 0 0.75rem; }
+.editor-body .milkdown h2 { font-size: 1.375rem; font-weight: 600; margin: 1.25rem 0 0.5rem; }
+.editor-body .milkdown h3 { font-size: 1.125rem; font-weight: 600; margin: 1rem 0 0.5rem; }
+.editor-body .milkdown p  { margin: 0.5rem 0; }
+.editor-body .milkdown ul,
+.editor-body .milkdown ol { padding-left: 1.5rem; margin: 0.5rem 0; }
+.editor-body .milkdown li { margin: 0.25rem 0; }
+.editor-body .milkdown blockquote {
+  border-left: 3px solid var(--border);
+  margin: 0.75rem 0;
+  padding: 0.25rem 0 0.25rem 1rem;
+  color: var(--text-muted);
+}
+.editor-body .milkdown code {
+  background: rgba(255,255,255,0.06);
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.875em;
+}
+.editor-body .milkdown pre {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  overflow-x: auto;
+  margin: 0.75rem 0;
+}
+.editor-body .milkdown pre code { background: none; padding: 0; }
+.editor-body .milkdown hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 1.5rem 0;
+}
+.editor-body .milkdown a { color: var(--accent); text-decoration: underline; }
+.editor-body .milkdown table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0.75rem 0;
+}
+.editor-body .milkdown th,
+.editor-body .milkdown td {
+  border: 1px solid var(--border);
+  padding: 0.4rem 0.75rem;
+  font-size: 0.875rem;
+}
+.editor-body .milkdown th { background: rgba(255,255,255,0.04); font-weight: 600; }

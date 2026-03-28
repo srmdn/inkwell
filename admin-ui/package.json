@@ -10,6 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@milkdown/plugin-history": "^7.19.2",
+    "@milkdown/plugin-listener": "^7.19.2",
+    "@milkdown/preset-commonmark": "^7.19.2",
+    "@milkdown/preset-gfm": "^7.19.2",
+    "@milkdown/react": "^7.19.2",
+    "@milkdown/utils": "^7.19.2",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-router-dom": "^7.13.2"

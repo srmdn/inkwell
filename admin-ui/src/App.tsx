@@ -4,6 +4,7 @@ import { ProtectedRoute } from './components/ProtectedRoute'
 import { Layout } from './components/Layout'
 import { Login } from './pages/Login'
 import { Posts } from './pages/Posts'
+import { PostEditor } from './pages/PostEditor'
 import './index.css'
 
 export default function App() {
@@ -18,6 +19,26 @@ export default function App() {
               <ProtectedRoute>
                 <Layout>
                   <Posts />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/posts/new"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <PostEditor />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/posts/:slug/edit"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <PostEditor />
                 </Layout>
               </ProtectedRoute>
             }

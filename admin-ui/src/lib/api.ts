@@ -12,6 +12,22 @@ export interface Post {
   updated_at: string
 }
 
+export interface PostDetail extends Post {
+  body: string
+  hero_image: string // base64 data URI or empty
+}
+
+export interface PostSavePayload {
+  slug: string
+  title: string
+  description: string
+  tags: string[]
+  publish_date: string
+  draft: boolean
+  body: string
+  hero_image: string // base64 data URI or empty (empty = preserve on update)
+}
+
 let csrfToken: string | null = null
 
 async function fetchCSRF(): Promise<string> {
@@ -79,6 +95,15 @@ export const api = {
   checkSession: () => fetchCSRF(),
 
   getPosts: () => request<Post[] | null>('GET', '/api/admin/posts'),
+
+  getPost: (slug: string) =>
+    request<PostDetail>('GET', `/api/admin/posts/${slug}`),
+
+  createPost: (slug: string, payload: PostSavePayload) =>
+    request<void>('POST', `/api/admin/posts/${slug}`, payload, true),
+
+  updatePost: (slug: string, payload: PostSavePayload) =>
+    request<void>('PUT', `/api/admin/posts/${slug}`, payload, true),
 
   deletePost: (slug: string) =>
     request<void>('DELETE', `/api/admin/posts/${slug}`, undefined, true),

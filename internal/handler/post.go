@@ -18,17 +18,20 @@ import (
 var slugPattern = regexp.MustCompile(`^[a-z0-9]+(?:-[a-z0-9]+)*$`)
 
 type postRequest struct {
+	Slug        string   `json:"slug"`        // new slug for rename on update; ignored on create
 	Title       string   `json:"title"`
 	Description string   `json:"description"`
 	Tags        []string `json:"tags"`
 	Draft       bool     `json:"draft"`
 	PublishDate string   `json:"publish_date"`
 	Body        string   `json:"body"`
+	HeroImage   string   `json:"hero_image"`  // base64 data URI; empty = preserve existing on update
 }
 
 type postResponse struct {
 	model.Post
-	Body string `json:"body,omitempty"`
+	Body      string `json:"body,omitempty"`
+	HeroImage string `json:"hero_image,omitempty"`
 }
 
 // ListPosts returns published posts (public).
@@ -124,7 +127,12 @@ func (h *Handler) GetAdminPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeJSON(w, http.StatusOK, postResponse{Post: post, Body: pf.Body})
+	heroImage := ""
+	if pf.Frontmatter.HeroImage != "" {
+		heroImage, _ = store.ReadHeroImageAsDataURI(slug, pf.Frontmatter.HeroImage)
+	}
+
+	writeJSON(w, http.StatusOK, postResponse{Post: post, Body: pf.Body, HeroImage: heroImage})
 }
 
 // CreatePost creates a new post (admin).
@@ -156,6 +164,14 @@ func (h *Handler) CreatePost(w http.ResponseWriter, r *http.Request) {
 		publishDate = storage.FormatPublishDate(time.Now())
 	}
 
+	// Save hero image if provided.
+	heroImagePath := ""
+	if req.HeroImage != "" {
+		if path, err := store.SaveHeroImage(slug, req.HeroImage); err == nil {
+			heroImagePath = path
+		}
+	}
+
 	if err := store.Write(slug, &storage.PostFile{
 		Frontmatter: storage.Frontmatter{
 			Title:       req.Title,
@@ -163,9 +179,11 @@ func (h *Handler) CreatePost(w http.ResponseWriter, r *http.Request) {
 			PublishDate: publishDate,
 			Draft:       req.Draft,
 			Tags:        req.Tags,
+			HeroImage:   heroImagePath,
 		},
 		Body: req.Body,
 	}); err != nil {
+		store.Delete(slug)
 		writeError(w, http.StatusInternalServerError, "could not write post file")
 		return
 	}
@@ -177,7 +195,6 @@ func (h *Handler) CreatePost(w http.ResponseWriter, r *http.Request) {
 		boolToInt(req.Draft), publishDate,
 	)
 	if err != nil {
-		// Roll back the file write
 		store.Delete(slug)
 		writeError(w, http.StatusInternalServerError, "could not save post")
 		return
@@ -187,8 +204,9 @@ func (h *Handler) CreatePost(w http.ResponseWriter, r *http.Request) {
 }
 
 // UpdatePost updates an existing post's metadata and body (admin).
+// If req.Slug differs from the URL slug, the post directory is renamed.
 func (h *Handler) UpdatePost(w http.ResponseWriter, r *http.Request) {
-	slug := chi.URLParam(r, "slug")
+	originalSlug := chi.URLParam(r, "slug")
 
 	var req postRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -200,10 +218,32 @@ func (h *Handler) UpdatePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Determine the target slug (req.Slug overrides URL slug for rename).
+	newSlug := strings.TrimSpace(req.Slug)
+	if newSlug == "" {
+		newSlug = originalSlug
+	}
+	if !slugPattern.MatchString(newSlug) {
+		writeError(w, http.StatusBadRequest, "slug must be lowercase letters, numbers, and hyphens only")
+		return
+	}
+
 	store := storage.New(h.cfg.ContentDir)
-	if !store.Exists(slug) {
+	if !store.Exists(originalSlug) {
 		writeError(w, http.StatusNotFound, "post not found")
 		return
+	}
+
+	// Rename the content directory if the slug changed.
+	if newSlug != originalSlug {
+		if store.Exists(newSlug) {
+			writeError(w, http.StatusConflict, "slug already taken")
+			return
+		}
+		if err := store.Rename(originalSlug, newSlug); err != nil {
+			writeError(w, http.StatusInternalServerError, "could not rename post")
+			return
+		}
 	}
 
 	publishDate := req.PublishDate
@@ -211,13 +251,26 @@ func (h *Handler) UpdatePost(w http.ResponseWriter, r *http.Request) {
 		publishDate = storage.FormatPublishDate(time.Now())
 	}
 
-	if err := store.Write(slug, &storage.PostFile{
+	// Preserve existing hero image path unless a new one is provided.
+	heroImagePath := ""
+	if req.HeroImage != "" {
+		if path, err := store.SaveHeroImage(newSlug, req.HeroImage); err == nil {
+			heroImagePath = path
+		}
+	} else {
+		if existing, err := store.Read(newSlug); err == nil {
+			heroImagePath = existing.Frontmatter.HeroImage
+		}
+	}
+
+	if err := store.Write(newSlug, &storage.PostFile{
 		Frontmatter: storage.Frontmatter{
 			Title:       req.Title,
 			Description: req.Description,
 			PublishDate: publishDate,
 			Draft:       req.Draft,
 			Tags:        req.Tags,
+			HeroImage:   heroImagePath,
 		},
 		Body: req.Body,
 	}); err != nil {
@@ -226,10 +279,10 @@ func (h *Handler) UpdatePost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_, err := h.db.Exec(
-		`UPDATE posts SET title=?, description=?, tags=?, draft=?, publish_date=?, updated_at=CURRENT_TIMESTAMP
+		`UPDATE posts SET slug=?, title=?, description=?, tags=?, draft=?, publish_date=?, updated_at=CURRENT_TIMESTAMP
 		 WHERE slug=?`,
-		req.Title, req.Description, strings.Join(req.Tags, ","),
-		boolToInt(req.Draft), publishDate, slug,
+		newSlug, req.Title, req.Description, strings.Join(req.Tags, ","),
+		boolToInt(req.Draft), publishDate, originalSlug,
 	)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "could not update post")
