@@ -926,7 +926,7 @@ body {
 .editor-wrap {
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  overflow: hidden;
+  overflow: clip; /* clip instead of hidden so position:sticky works */
   background: var(--bg-card);
 }
 
@@ -938,6 +938,16 @@ body {
   border-bottom: 1px solid var(--border);
   background: var(--bg-card);
   flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* On mobile, account for the top bar height */
+@media (max-width: 1023px) {
+  .editor-toolbar {
+    top: 52px;
+  }
 }
 
 .tb-btn {

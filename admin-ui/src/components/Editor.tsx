@@ -58,7 +58,6 @@ function Sep() {
 
 export function MarkdownEditor({ value, onChange }: EditorProps) {
   const editorRef = useRef<HTMLDivElement>(null)
-  const outerRef = useRef<HTMLDivElement>(null)
   const toolbarRef = useRef<HTMLDivElement>(null)
   const instanceRef = useRef<Editor | null>(null)
   const onChangeRef = useRef(onChange)
@@ -140,58 +139,6 @@ export function MarkdownEditor({ value, onChange }: EditorProps) {
     return () => cancelAnimationFrame(rafId)
   }, [])
 
-  // JS-based sticky toolbar — CSS sticky is unreliable in some scroll containers
-  useEffect(() => {
-    const toolbar = toolbarRef.current
-    const outer = outerRef.current
-    if (!toolbar || !outer) return
-
-    // Height of the mobile top bar or 0 on desktop
-    const getNavH = () => {
-      const topbar = document.querySelector('.mobile-topbar') as HTMLElement | null
-      return topbar ? topbar.offsetHeight : 0
-    }
-
-    const update = () => {
-      const navH = getNavH()
-      const rect = outer.getBoundingClientRect()
-      const shouldFix = rect.top < navH && rect.bottom > navH + 48
-      if (shouldFix) {
-        toolbar.style.position = 'fixed'
-        toolbar.style.top = `${navH}px`
-        toolbar.style.width = `${outer.offsetWidth}px`
-        toolbar.style.left = `${rect.left}px`
-        toolbar.style.zIndex = '100'
-        toolbar.style.borderRadius = '0'
-        toolbar.style.borderTop = 'none'
-      } else {
-        toolbar.style.position = ''
-        toolbar.style.top = ''
-        toolbar.style.width = ''
-        toolbar.style.left = ''
-        toolbar.style.zIndex = ''
-        toolbar.style.borderRadius = ''
-        toolbar.style.borderTop = ''
-      }
-    }
-
-    const scrollTargets: EventTarget[] = [window]
-    let el: HTMLElement | null = outer.parentElement
-    while (el) {
-      const { overflowY, overflow } = window.getComputedStyle(el)
-      if (/auto|scroll/.test(overflowY + overflow)) scrollTargets.push(el)
-      el = el.parentElement
-    }
-
-    scrollTargets.forEach(t => t.addEventListener('scroll', update, { passive: true }))
-    window.addEventListener('resize', update, { passive: true })
-    update()
-
-    return () => {
-      scrollTargets.forEach(t => t.removeEventListener('scroll', update))
-      window.removeEventListener('resize', update)
-    }
-  }, [])
 
   function callCommand(key: string, payload?: unknown) {
     instanceRef.current?.action((ctx) => {
@@ -272,7 +219,7 @@ export function MarkdownEditor({ value, onChange }: EditorProps) {
   }
 
   return (
-    <div ref={outerRef} className="editor-wrap">
+    <div className="editor-wrap">
       <div ref={toolbarRef} className="editor-toolbar">
         {/* Block type */}
         <TbBtn onClick={() => callCommand(CMD.PARAGRAPH)} title="Paragraph" active={activeNode?.type === 'paragraph'}>
