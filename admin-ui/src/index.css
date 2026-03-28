@@ -439,6 +439,8 @@ body {
   justify-content: space-between;
   padding: 1.75rem 2rem 1.5rem;
   border-bottom: 1px solid var(--border);
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .page-header h1 {
@@ -447,8 +449,20 @@ body {
   letter-spacing: -0.02em;
 }
 
+@media (max-width: 640px) {
+  .page-header {
+    padding: 1.25rem 1rem 1rem;
+  }
+}
+
 .page-content {
   padding: 1.5rem 2rem;
+}
+
+@media (max-width: 640px) {
+  .page-content {
+    padding: 1rem;
+  }
 }
 
 /* ── Buttons (small) ──────────────────────────────────────── */
@@ -513,7 +527,12 @@ body {
   gap: 2px;
   margin-bottom: 1rem;
   border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
 }
+
+.filter-tabs::-webkit-scrollbar { display: none; }
 
 .filter-tab {
   display: flex;
@@ -526,6 +545,7 @@ body {
   background: none;
   border: none;
   border-bottom: 2px solid transparent;
+  white-space: nowrap;
   margin-bottom: -1px;
   cursor: pointer;
   transition: color 0.12s, border-color 0.12s;
@@ -572,6 +592,18 @@ body {
   background: var(--bg-card);
   transition: background 0.12s;
   cursor: pointer;
+}
+
+@media (max-width: 640px) {
+  .post-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.625rem;
+  }
+  .post-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
 }
 
 .post-item + .post-item {
@@ -789,6 +821,9 @@ body {
 @media (max-width: 1023px) {
   .editor-layout {
     flex-direction: column;
+  }
+  .editor-main {
+    width: 100%;
   }
   .editor-meta {
     width: 100%;
