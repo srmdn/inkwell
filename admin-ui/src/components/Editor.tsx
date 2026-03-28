@@ -1,32 +1,71 @@
-import { useEffect, useRef } from 'react'
-import { Editor, rootCtx, defaultValueCtx } from '@milkdown/core'
+import { useEffect, useRef, useState } from 'react'
+import { Editor, rootCtx, defaultValueCtx, commandsCtx, editorViewCtx } from '@milkdown/core'
 import { commonmark } from '@milkdown/preset-commonmark'
 import { gfm } from '@milkdown/preset-gfm'
-import { history, undoCommand, redoCommand } from '@milkdown/plugin-history'
+import { history } from '@milkdown/plugin-history'
 import { listener, listenerCtx } from '@milkdown/plugin-listener'
-import { callCommand } from '@milkdown/utils'
 import {
-  toggleEmphasisCommand,
-  toggleStrongCommand,
-  toggleInlineCodeCommand,
-  wrapInBlockquoteCommand,
-  wrapInBulletListCommand,
-  wrapInOrderedListCommand,
-  insertHrCommand,
-  turnIntoTextCommand,
-} from '@milkdown/preset-commonmark'
-import { insertTableCommand } from '@milkdown/preset-gfm'
+  Bold, Italic, Strikethrough, Code, Code2,
+  Heading1, Heading2, Heading3,
+  Quote, List, ListOrdered, Minus, Pilcrow, Link, Table,
+} from 'lucide-react'
 
 interface EditorProps {
   value: string
   onChange: (markdown: string) => void
 }
 
+const CMD = {
+  BOLD:         'ToggleStrong',
+  ITALIC:       'ToggleEmphasis',
+  STRIKE:       'ToggleStrikeThrough',
+  CODE:         'ToggleInlineCode',
+  HEADING:      'WrapInHeading',
+  PARAGRAPH:    'TurnIntoText',
+  BLOCKQUOTE:   'WrapInBlockquote',
+  BULLET_LIST:  'WrapInBulletList',
+  ORDERED_LIST: 'WrapInOrderedList',
+  CODE_BLOCK:   'CreateCodeBlock',
+  HR:           'InsertHr',
+} as const
+
+function TbBtn({
+  onClick, title, active, children,
+}: {
+  onClick: () => void
+  title: string
+  active?: boolean
+  children: React.ReactNode
+}) {
+  return (
+    <button
+      type="button"
+      title={title}
+      onMouseDown={(e) => {
+        e.preventDefault() // Prevent editor losing focus
+        onClick()
+      }}
+      className={`tb-btn${active ? ' tb-btn-active' : ''}`}
+    >
+      {children}
+    </button>
+  )
+}
+
+function Sep() {
+  return <span className="tb-sep" />
+}
+
 export function MarkdownEditor({ value, onChange }: EditorProps) {
   const editorRef = useRef<HTMLDivElement>(null)
+  const outerRef = useRef<HTMLDivElement>(null)
+  const toolbarRef = useRef<HTMLDivElement>(null)
   const instanceRef = useRef<Editor | null>(null)
   const onChangeRef = useRef(onChange)
   onChangeRef.current = onChange
+
+  const [activeMarks, setActiveMarks] = useState<Set<string>>(new Set())
+  const [activeNode, setActiveNode] = useState<{ type: string; level?: number } | null>(null)
 
   useEffect(() => {
     if (!editorRef.current) return
@@ -57,57 +96,244 @@ export function MarkdownEditor({ value, onChange }: EditorProps) {
       instanceRef.current = null
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []) // mount once — value is set via defaultValueCtx
+  }, [])
 
-  function action(cmd: Parameters<typeof callCommand>[0]) {
-    instanceRef.current?.action(callCommand(cmd))
+  // Sync active state for toolbar highlights
+  useEffect(() => {
+    let rafId: number
+    const loop = () => {
+      const editor = instanceRef.current
+      if (editor) {
+        try {
+          editor.action((ctx) => {
+            const view = ctx.get(editorViewCtx)
+            const { state } = view
+            const { schema, selection, storedMarks } = state
+            const { $from } = selection
+
+            const marks = storedMarks ?? $from.marks()
+            const active = new Set<string>()
+            for (const mark of marks) active.add(mark.type.name)
+            setActiveMarks(active)
+
+            const node = $from.parent
+            if (node.type === schema.nodes.heading) {
+              setActiveNode({ type: 'heading', level: node.attrs.level })
+            } else if (node.type === schema.nodes.paragraph) {
+              setActiveNode({ type: 'paragraph' })
+            } else if (
+              node.type === schema.nodes.blockquote ||
+              $from.node($from.depth - 1)?.type === schema.nodes.blockquote
+            ) {
+              setActiveNode({ type: 'blockquote' })
+            } else {
+              setActiveNode({ type: node.type.name })
+            }
+          })
+        } catch {
+          // editor not ready yet
+        }
+      }
+      rafId = requestAnimationFrame(loop)
+    }
+    rafId = requestAnimationFrame(loop)
+    return () => cancelAnimationFrame(rafId)
+  }, [])
+
+  // JS-based sticky toolbar — CSS sticky is unreliable in some scroll containers
+  useEffect(() => {
+    const toolbar = toolbarRef.current
+    const outer = outerRef.current
+    if (!toolbar || !outer) return
+
+    // Height of the mobile top bar or 0 on desktop
+    const getNavH = () => {
+      const topbar = document.querySelector('.mobile-topbar') as HTMLElement | null
+      return topbar ? topbar.offsetHeight : 0
+    }
+
+    const update = () => {
+      const navH = getNavH()
+      const rect = outer.getBoundingClientRect()
+      const shouldFix = rect.top < navH && rect.bottom > navH + 48
+      if (shouldFix) {
+        toolbar.style.position = 'fixed'
+        toolbar.style.top = `${navH}px`
+        toolbar.style.width = `${outer.offsetWidth}px`
+        toolbar.style.left = `${rect.left}px`
+        toolbar.style.zIndex = '100'
+        toolbar.style.borderRadius = '0'
+        toolbar.style.borderTop = 'none'
+      } else {
+        toolbar.style.position = ''
+        toolbar.style.top = ''
+        toolbar.style.width = ''
+        toolbar.style.left = ''
+        toolbar.style.zIndex = ''
+        toolbar.style.borderRadius = ''
+        toolbar.style.borderTop = ''
+      }
+    }
+
+    const scrollTargets: EventTarget[] = [window]
+    let el: HTMLElement | null = outer.parentElement
+    while (el) {
+      const { overflowY, overflow } = window.getComputedStyle(el)
+      if (/auto|scroll/.test(overflowY + overflow)) scrollTargets.push(el)
+      el = el.parentElement
+    }
+
+    scrollTargets.forEach(t => t.addEventListener('scroll', update, { passive: true }))
+    window.addEventListener('resize', update, { passive: true })
+    update()
+
+    return () => {
+      scrollTargets.forEach(t => t.removeEventListener('scroll', update))
+      window.removeEventListener('resize', update)
+    }
+  }, [])
+
+  function callCommand(key: string, payload?: unknown) {
+    instanceRef.current?.action((ctx) => {
+      ctx.get(commandsCtx).call(key, payload)
+    })
+  }
+
+  function handleLink() {
+    const editor = instanceRef.current
+    if (!editor) return
+    editor.action((ctx) => {
+      const view = ctx.get(editorViewCtx)
+      const { state, dispatch } = view
+      const { schema, selection } = state
+      let { from, to } = selection
+      const linkMark = schema.marks.link
+      if (!linkMark) return
+
+      if (from === to) {
+        const $pos = state.doc.resolve(from)
+        if ($pos.marks().some((m: any) => m.type === linkMark)) {
+          while (from > 0 && state.doc.resolve(from - 1).marks().some((m: any) => m.type === linkMark)) from--
+          while (to < state.doc.content.size && state.doc.resolve(to).marks().some((m: any) => m.type === linkMark)) to++
+        }
+      }
+
+      if (from === to) {
+        window.alert('Select some text first to add a link.')
+        view.focus()
+        return
+      }
+
+      const existing = state.doc.resolve(from).marks().find((m: any) => m.type === linkMark)
+      const existingHref = existing?.attrs.href ?? ''
+      const url = window.prompt('Link URL (leave empty to remove):', existingHref)
+      if (url === null) { view.focus(); return }
+
+      const tr = state.tr
+      if (url === '') {
+        tr.removeMark(from, to, linkMark)
+      } else {
+        tr.addMark(from, to, linkMark.create({ href: url }))
+      }
+      dispatch(tr)
+      view.focus()
+    })
+  }
+
+  function handleTable() {
+    const editor = instanceRef.current
+    if (!editor) return
+    editor.action((ctx) => {
+      const view = ctx.get(editorViewCtx)
+      const { state, dispatch } = view
+      const { schema, selection } = state
+      const tableNode = schema.nodes.table
+      const rowNode = schema.nodes.table_row
+      const cellNode = schema.nodes.table_cell
+      const headerNode = schema.nodes.table_header
+      if (!tableNode || !rowNode || !cellNode || !headerNode) return
+
+      const cell = (text: string, isHeader = false) => {
+        const nodeType = isHeader ? headerNode : cellNode
+        return nodeType.create({}, schema.nodes.paragraph.create({}, text ? schema.text(text) : undefined))
+      }
+
+      const table = tableNode.create({}, [
+        rowNode.create({}, [cell('Header 1', true), cell('Header 2', true), cell('Header 3', true)]),
+        rowNode.create({}, [cell(''), cell(''), cell('')]),
+        rowNode.create({}, [cell(''), cell(''), cell('')]),
+      ])
+
+      const { $from } = selection
+      const insertPos = $from.end($from.depth) + 1
+      dispatch(state.tr.insert(insertPos, table))
+      view.focus()
+    })
   }
 
   return (
-    <div className="editor-wrap">
-      <div className="editor-toolbar">
-        <button type="button" className="tb-btn" title="Bold" onClick={() => action(toggleStrongCommand.key)}>
-          <b>B</b>
-        </button>
-        <button type="button" className="tb-btn" title="Italic" onClick={() => action(toggleEmphasisCommand.key)}>
-          <i>I</i>
-        </button>
-        <button type="button" className="tb-btn" title="Inline code" onClick={() => action(toggleInlineCodeCommand.key)}>
-          {'</>'}
-        </button>
-        <span className="tb-sep" />
-        <button type="button" className="tb-btn" title="Blockquote" onClick={() => action(wrapInBlockquoteCommand.key)}>
-          &ldquo;
-        </button>
-        <button type="button" className="tb-btn" title="Bullet list" onClick={() => action(wrapInBulletListCommand.key)}>
-          &#8226;&#8212;
-        </button>
-        <button type="button" className="tb-btn" title="Ordered list" onClick={() => action(wrapInOrderedListCommand.key)}>
-          1&#8212;
-        </button>
-        <span className="tb-sep" />
-        <button type="button" className="tb-btn" title="Table" onClick={() => action(insertTableCommand.key)}>
-          &#9956;
-        </button>
-        <button type="button" className="tb-btn" title="Horizontal rule" onClick={() => action(insertHrCommand.key)}>
-          &#8212;
-        </button>
-        <button type="button" className="tb-btn" title="Plain text" onClick={() => action(turnIntoTextCommand.key)}>
-          T
-        </button>
-        <span className="tb-sep" />
-        <button type="button" className="tb-btn" title="Undo" onClick={() => action(undoCommand.key)}>
-          &#8617;
-        </button>
-        <button type="button" className="tb-btn" title="Redo" onClick={() => action(redoCommand.key)}>
-          &#8618;
-        </button>
+    <div ref={outerRef} className="editor-wrap">
+      <div ref={toolbarRef} className="editor-toolbar">
+        {/* Block type */}
+        <TbBtn onClick={() => callCommand(CMD.PARAGRAPH)} title="Paragraph" active={activeNode?.type === 'paragraph'}>
+          <Pilcrow size={14} />
+        </TbBtn>
+        <TbBtn onClick={() => callCommand(CMD.HEADING, 1)} title="Heading 1" active={activeNode?.type === 'heading' && activeNode.level === 1}>
+          <Heading1 size={14} />
+        </TbBtn>
+        <TbBtn onClick={() => callCommand(CMD.HEADING, 2)} title="Heading 2" active={activeNode?.type === 'heading' && activeNode.level === 2}>
+          <Heading2 size={14} />
+        </TbBtn>
+        <TbBtn onClick={() => callCommand(CMD.HEADING, 3)} title="Heading 3" active={activeNode?.type === 'heading' && activeNode.level === 3}>
+          <Heading3 size={14} />
+        </TbBtn>
+
+        <Sep />
+
+        {/* Inline marks */}
+        <TbBtn onClick={() => callCommand(CMD.BOLD)} title="Bold (Ctrl+B)" active={activeMarks.has('strong')}>
+          <Bold size={14} />
+        </TbBtn>
+        <TbBtn onClick={() => callCommand(CMD.ITALIC)} title="Italic (Ctrl+I)" active={activeMarks.has('em')}>
+          <Italic size={14} />
+        </TbBtn>
+        <TbBtn onClick={() => callCommand(CMD.STRIKE)} title="Strikethrough" active={activeMarks.has('strike_through')}>
+          <Strikethrough size={14} />
+        </TbBtn>
+        <TbBtn onClick={() => callCommand(CMD.CODE)} title="Inline Code" active={activeMarks.has('code_inline')}>
+          <Code size={14} />
+        </TbBtn>
+        <TbBtn onClick={handleLink} title="Link — select text, then click" active={activeMarks.has('link')}>
+          <Link size={14} />
+        </TbBtn>
+
+        <Sep />
+
+        {/* Block elements */}
+        <TbBtn onClick={() => callCommand(CMD.BLOCKQUOTE)} title="Blockquote" active={activeNode?.type === 'blockquote'}>
+          <Quote size={14} />
+        </TbBtn>
+        <TbBtn onClick={() => callCommand(CMD.BULLET_LIST)} title="Bullet List">
+          <List size={14} />
+        </TbBtn>
+        <TbBtn onClick={() => callCommand(CMD.ORDERED_LIST)} title="Numbered List">
+          <ListOrdered size={14} />
+        </TbBtn>
+        <TbBtn onClick={() => callCommand(CMD.CODE_BLOCK)} title="Code Block" active={activeNode?.type === 'code_block'}>
+          <Code2 size={14} />
+        </TbBtn>
+        <TbBtn onClick={handleTable} title="Insert Table">
+          <Table size={14} />
+        </TbBtn>
+        <TbBtn onClick={() => callCommand(CMD.HR)} title="Divider">
+          <Minus size={14} />
+        </TbBtn>
       </div>
+
       <div
         ref={editorRef}
         className="editor-body"
         onClick={(e) => {
-          // Forward clicks on the empty area below content to the ProseMirror editor
           if ((e.target as HTMLElement).classList.contains('editor-body')) {
             editorRef.current?.querySelector<HTMLElement>('.ProseMirror')?.focus()
           }

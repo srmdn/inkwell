@@ -856,6 +856,16 @@ body {
   color: var(--text);
 }
 
+.tb-btn-active {
+  background: rgba(74, 222, 128, 0.12);
+  color: var(--accent);
+}
+
+.tb-btn-active:hover {
+  background: rgba(74, 222, 128, 0.18);
+  color: var(--accent);
+}
+
 .tb-sep {
   width: 1px;
   height: 18px;
