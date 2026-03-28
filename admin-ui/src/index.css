@@ -872,7 +872,9 @@ body {
 }
 
 /* Milkdown ProseMirror content styles */
-.editor-body .milkdown { outline: none; }
+.editor-body { cursor: text; }
+.editor-body .milkdown { outline: none; min-height: 380px; display: flex; flex-direction: column; }
+.editor-body .ProseMirror { flex: 1; min-height: 380px; outline: none; }
 .editor-body .milkdown h1 { font-size: 1.75rem; font-weight: 700; margin: 1.5rem 0 0.75rem; }
 .editor-body .milkdown h2 { font-size: 1.375rem; font-weight: 600; margin: 1.25rem 0 0.5rem; }
 .editor-body .milkdown h3 { font-size: 1.125rem; font-weight: 600; margin: 1rem 0 0.5rem; }

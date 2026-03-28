@@ -103,7 +103,16 @@ export function MarkdownEditor({ value, onChange }: EditorProps) {
           &#8618;
         </button>
       </div>
-      <div ref={editorRef} className="editor-body" />
+      <div
+        ref={editorRef}
+        className="editor-body"
+        onClick={(e) => {
+          // Forward clicks on the empty area below content to the ProseMirror editor
+          if ((e.target as HTMLElement).classList.contains('editor-body')) {
+            editorRef.current?.querySelector<HTMLElement>('.ProseMirror')?.focus()
+          }
+        }}
+      />
     </div>
   )
 }
