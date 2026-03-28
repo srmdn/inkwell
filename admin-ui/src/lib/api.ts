@@ -1,5 +1,17 @@
 // Typed API client. Handles CSRF token fetch and injection automatically.
 
+export interface Post {
+  id: number
+  slug: string
+  title: string
+  description: string
+  tags: string // comma-separated
+  draft: boolean
+  publish_date: string
+  created_at: string
+  updated_at: string
+}
+
 let csrfToken: string | null = null
 
 async function fetchCSRF(): Promise<string> {
@@ -65,4 +77,9 @@ export const api = {
   logout: () => request<void>('POST', '/api/logout', undefined, true),
 
   checkSession: () => fetchCSRF(),
+
+  getPosts: () => request<Post[] | null>('GET', '/api/admin/posts'),
+
+  deletePost: (slug: string) =>
+    request<void>('DELETE', `/api/admin/posts/${slug}`, undefined, true),
 }
