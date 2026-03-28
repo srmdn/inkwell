@@ -160,8 +160,15 @@ export function PostEditor() {
 
       <div className="page-content editor-layout">
 
-        {/* Main column: body */}
+        {/* Main column: title + body */}
         <div className="editor-main">
+          <input
+            className="editor-title-input"
+            type="text"
+            value={title}
+            onChange={(e) => handleTitleChange(e.target.value)}
+            placeholder="Post title"
+          />
           <MarkdownEditor value={body} onChange={setBody} />
         </div>
 
@@ -169,17 +176,6 @@ export function PostEditor() {
         <aside className="editor-meta">
 
           <div className="meta-section">
-            <div className="field">
-              <label htmlFor="title">Title</label>
-              <input
-                id="title"
-                type="text"
-                value={title}
-                onChange={(e) => handleTitleChange(e.target.value)}
-                placeholder="Post title"
-              />
-            </div>
-
             <div className="field">
               <label htmlFor="slug">Slug</label>
               <input
@@ -200,6 +196,9 @@ export function PostEditor() {
                 placeholder="Short description for SEO and previews"
                 rows={3}
               />
+              <span className={`field-hint field-hint-right${description.length > 160 ? ' field-hint-over' : ''}`}>
+                {description.length} / 160
+              </span>
             </div>
 
             <div className="field">

@@ -755,6 +755,27 @@ body {
 .editor-main {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.editor-title-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  padding: 0;
+  font-family: inherit;
+}
+
+.editor-title-input::placeholder {
+  color: var(--border);
 }
 
 .editor-meta {
@@ -821,6 +842,15 @@ body {
   color: var(--text-muted);
   margin-top: 0.2rem;
   display: block;
+}
+
+.field-hint-right {
+  text-align: right;
+}
+
+.field-hint-over {
+  color: var(--error);
+  font-weight: 600;
 }
 
 .field-row {
