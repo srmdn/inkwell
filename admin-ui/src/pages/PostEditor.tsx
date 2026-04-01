@@ -39,10 +39,23 @@ export function PostEditor() {
   const [heroImage, setHeroImage] = useState('')
   const [heroChanged, setHeroChanged] = useState(false)
   const heroInputRef = useRef<HTMLInputElement>(null)
+  const handleSaveRef = useRef<() => void>(() => {})
 
   useEffect(() => {
     if (isEdit && slug) loadPost(slug)
   }, [isEdit, slug])
+
+  // Cmd/Ctrl+S shortcut
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+        e.preventDefault()
+        handleSaveRef.current()
+      }
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [])
 
   async function loadPost(s: string) {
     try {
@@ -129,6 +142,10 @@ export function PostEditor() {
       setSaving(false)
     }
   }
+
+  // Keep ref in sync with latest closure so the keydown handler always calls
+  // the current version of handleSave (which closes over current state).
+  handleSaveRef.current = handleSave
 
   if (loading) {
     return (

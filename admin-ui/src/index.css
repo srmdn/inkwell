@@ -1032,6 +1032,139 @@ body {
   line-height: 1.75;
 }
 
+/* ── Page count (header right slot) ──────────────────────── */
+
+.page-count {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+/* ── Settings page ────────────────────────────────────────── */
+
+.settings-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  max-width: 680px;
+}
+
+.settings-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  flex-wrap: wrap;
+}
+
+.settings-card-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.2rem;
+}
+
+.settings-card-desc {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.rebuild-status {
+  border-top: 1px solid var(--border);
+  padding: 1rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.rebuild-status-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.rebuild-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  min-width: 64px;
+}
+
+.rebuild-value {
+  font-size: 0.8125rem;
+  color: var(--text);
+}
+
+.rebuild-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: 100px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.rebuild-badge-running {
+  background: rgba(251, 191, 36, 0.1);
+  color: #fbbf24;
+}
+
+.rebuild-badge-success {
+  background: rgba(74, 222, 128, 0.1);
+  color: var(--accent);
+}
+
+.rebuild-badge-failed {
+  background: rgba(248, 113, 113, 0.1);
+  color: var(--error);
+}
+
+.rebuild-dot-spinner {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.rebuild-error {
+  font-size: 0.8125rem;
+  color: var(--error);
+  background: rgba(248, 113, 113, 0.06);
+  border: 1px solid rgba(248, 113, 113, 0.15);
+  border-radius: calc(var(--radius) - 2px);
+  padding: 0.5rem 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.rebuild-output {
+  font-size: 0.75rem;
+  font-family: var(--font-mono, monospace);
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) - 2px);
+  padding: 0.75rem;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 240px;
+  overflow-y: auto;
+  margin-top: 0.25rem;
+}
+
 /* Milkdown ProseMirror content styles */
 .editor-body { cursor: text; }
 .editor-body .milkdown { outline: none; min-height: 380px; display: flex; flex-direction: column; }

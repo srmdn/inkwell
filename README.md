@@ -83,6 +83,19 @@ Key variables:
 | `THEME_BUILD_CMD` | `npm run build` | Command to rebuild the theme |
 | `THEME_SERVICE` | (none) | systemd service name to restart after rebuild |
 
+## Admin Dashboard
+
+Folio includes a built-in admin dashboard at `/admin`. No separate service or install step required — it is embedded in the Go binary.
+
+| Path | Description |
+|------|-------------|
+| `/admin/login` | Sign in |
+| `/admin/posts` | Create, edit, publish, and delete posts |
+| `/admin/subscribers` | View and remove newsletter subscribers |
+| `/admin/settings` | Trigger a site rebuild and view build status |
+
+The post editor uses [Milkdown](https://milkdown.dev), a WYSIWYG Markdown editor with support for headings, lists, code blocks, tables, and more. Press **Cmd+S** (or **Ctrl+S** on Windows/Linux) to save at any time.
+
 ## API
 
 Full API reference: [docs/api.md](docs/api.md)

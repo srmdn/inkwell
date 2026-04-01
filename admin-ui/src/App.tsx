@@ -5,6 +5,8 @@ import { Layout } from './components/Layout'
 import { Login } from './pages/Login'
 import { Posts } from './pages/Posts'
 import { PostEditor } from './pages/PostEditor'
+import { Subscribers } from './pages/Subscribers'
+import { Settings } from './pages/Settings'
 import './index.css'
 
 export default function App() {
@@ -39,6 +41,26 @@ export default function App() {
               <ProtectedRoute>
                 <Layout>
                   <PostEditor />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/subscribers"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <Subscribers />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/settings"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <Settings />
                 </Layout>
               </ProtectedRoute>
             }

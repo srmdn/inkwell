@@ -90,6 +90,7 @@ Returns `[]` (empty array) if no posts are published.
 
 Get a single published post including its Markdown body.
 
+
 **Response `200`**
 ```json
 {
@@ -107,6 +108,33 @@ Get a single published post including its Markdown body.
 ```
 
 **Errors**: `404` post not found or is a draft
+
+---
+
+### `POST /api/subscribe`
+
+Subscribe an email address to the newsletter.
+
+**Request body**
+```json
+{ "email": "reader@example.com" }
+```
+
+**Response `201`** No content.
+
+**Errors**: `400` missing email, `409` already subscribed
+
+---
+
+### `GET /api/unsubscribe`
+
+Unsubscribe using the token from a newsletter email.
+
+**Query params**: `?token=<unsubscribe-token>`
+
+**Response `204`** No content.
+
+**Errors**: `400` missing token, `404` token not found
 
 ---
 
@@ -206,6 +234,72 @@ Delete a post and its content files from disk.
 **Response `204`** No content.
 
 **Errors**: `404` post not found
+
+---
+
+### `GET /api/admin/subscribers`
+
+List all newsletter subscribers.
+
+**Response `200`**
+```json
+[
+  {
+    "id": 1,
+    "email": "reader@example.com",
+    "token": "uuid-unsubscribe-token",
+    "subscribed_at": "2026-03-27T10:00:00Z"
+  }
+]
+```
+
+Returns `[]` if no subscribers.
+
+---
+
+### `DELETE /api/admin/subscribers/{id}`
+
+Remove a subscriber by ID.
+
+**Response `204`** No content.
+
+**Errors**: `404` subscriber not found
+
+---
+
+### `POST /api/admin/newsletter/send`
+
+Send an email to all subscribers. Requires SMTP to be configured.
+
+**Request body**
+```json
+{
+  "subject": "New post: My First Post",
+  "body": "Email body in plain text or HTML."
+}
+```
+
+**Response `200`**
+```json
+{ "sent": 42 }
+```
+
+**Errors**: `400` missing subject or body, `503` SMTP not configured
+
+---
+
+### `POST /api/webhook/rebuild`
+
+Trigger a theme rebuild via a shared secret. Disabled (404) if
+`WEBHOOK_SECRET` is not set in `.env`.
+
+Pass the secret via `X-Webhook-Secret` header or `Authorization: Bearer <secret>`.
+
+**Response `202`** Build started.
+
+**Response `401`** Invalid secret.
+
+**Response `409`** Rebuild already in progress.
 
 ---
 

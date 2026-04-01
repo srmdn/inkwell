@@ -17,6 +17,21 @@ export interface PostDetail extends Post {
   hero_image: string // base64 data URI or empty
 }
 
+export interface Subscriber {
+  id: number
+  email: string
+  token: string
+  subscribed_at: string
+}
+
+export interface RebuildStatus {
+  status: 'idle' | 'running' | 'success' | 'failed'
+  output: string
+  started_at: string
+  finished_at: string
+  error: string
+}
+
 export interface PostSavePayload {
   slug: string
   title: string
@@ -107,4 +122,16 @@ export const api = {
 
   deletePost: (slug: string) =>
     request<void>('DELETE', `/api/admin/posts/${slug}`, undefined, true),
+
+  getSubscribers: () =>
+    request<Subscriber[]>('GET', '/api/admin/subscribers'),
+
+  deleteSubscriber: (id: number) =>
+    request<void>('DELETE', `/api/admin/subscribers/${id}`, undefined, true),
+
+  triggerRebuild: () =>
+    request<void>('POST', '/api/admin/rebuild', undefined, true),
+
+  getRebuildStatus: () =>
+    request<RebuildStatus>('GET', '/api/admin/rebuild/status'),
 }
