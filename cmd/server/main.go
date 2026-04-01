@@ -86,6 +86,7 @@ func main() {
 	r.Post("/api/webhook/rebuild", h.WebhookRebuild)
 	r.Post("/api/subscribe", h.Subscribe)
 	r.Get("/api/unsubscribe", h.Unsubscribe)
+	r.Get("/api/settings", h.GetPublicSettings)
 
 	// Protected routes (JWT + CSRF)
 	r.Group(func(r chi.Router) {
@@ -104,6 +105,8 @@ func main() {
 			r.Get("/api/admin/subscribers", h.ListSubscribers)
 			r.Delete("/api/admin/subscribers/{id}", h.DeleteSubscriber)
 			r.Post("/api/admin/newsletter/send", h.SendNewsletter)
+			r.Get("/api/admin/settings", h.GetAdminSettings)
+			r.Put("/api/admin/settings", h.UpdateSettings)
 		})
 	})
 

@@ -24,6 +24,14 @@ export interface Subscriber {
   subscribed_at: string
 }
 
+export interface SiteSettings {
+  site_name: string
+  site_description: string
+  social_github: string
+  social_twitter: string
+  social_linkedin: string
+}
+
 export interface RebuildStatus {
   status: 'idle' | 'running' | 'success' | 'failed'
   output: string
@@ -134,4 +142,10 @@ export const api = {
 
   getRebuildStatus: () =>
     request<RebuildStatus>('GET', '/api/admin/rebuild/status'),
+
+  getSettings: () =>
+    request<SiteSettings>('GET', '/api/admin/settings'),
+
+  updateSettings: (settings: SiteSettings) =>
+    request<void>('PUT', '/api/admin/settings', settings, true),
 }
