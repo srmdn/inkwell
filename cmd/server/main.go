@@ -19,6 +19,7 @@ import (
 	"github.com/srmdn/foliocms/internal/config"
 	"github.com/srmdn/foliocms/internal/db"
 	"github.com/srmdn/foliocms/internal/handler"
+	"github.com/srmdn/foliocms/internal/media"
 	"github.com/srmdn/foliocms/internal/middleware"
 	"github.com/srmdn/foliocms/internal/rebuild"
 )
@@ -73,10 +74,14 @@ func main() {
 	h := handler.New(database, cfg)
 	rb := rebuild.New(cfg.ThemeDir, cfg.ThemeBuildCmd, cfg.ThemeService)
 	h.SetRebuilder(rb)
+	h.SetMediaDriver(media.NewLocalDriver(cfg.MediaDir, cfg.SiteURL))
 
 	// Admin SPA (embedded React build)
 	r.Handle("/admin", adminui.Handler())
 	r.Handle("/admin/*", adminui.Handler())
+
+	// Serve local media files
+	r.Handle("/media/*", http.StripPrefix("/media/", http.FileServer(http.Dir(cfg.MediaDir))))
 
 	// Public routes
 	r.Post("/api/login", h.Login)
@@ -107,6 +112,9 @@ func main() {
 			r.Post("/api/admin/newsletter/send", h.SendNewsletter)
 			r.Get("/api/admin/settings", h.GetAdminSettings)
 			r.Put("/api/admin/settings", h.UpdateSettings)
+			r.Post("/api/admin/media", h.UploadMedia)
+			r.Get("/api/admin/media", h.ListMedia)
+			r.Delete("/api/admin/media/{key}", h.DeleteMedia)
 		})
 	})
 

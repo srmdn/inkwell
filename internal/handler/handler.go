@@ -7,15 +7,17 @@ import (
 	"github.com/srmdn/foliocms/internal/config"
 	"github.com/srmdn/foliocms/internal/db"
 	"github.com/srmdn/foliocms/internal/mailer"
+	"github.com/srmdn/foliocms/internal/media"
 	"github.com/srmdn/foliocms/internal/rebuild"
 )
 
 // Handler holds shared dependencies for all HTTP handlers.
 type Handler struct {
-	db        *db.DB
-	cfg       *config.Config
-	rebuilder *rebuild.Rebuilder
-	mailer    *mailer.Mailer
+	db          *db.DB
+	cfg         *config.Config
+	rebuilder   *rebuild.Rebuilder
+	mailer      *mailer.Mailer
+	mediaDriver media.MediaDriver
 }
 
 func New(database *db.DB, cfg *config.Config) *Handler {

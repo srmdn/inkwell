@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/joho/godotenv"
@@ -23,6 +24,11 @@ type Config struct {
 
 	// Webhook
 	WebhookSecret string // optional: if set, enables POST /api/webhook/rebuild
+
+	// Media
+	SiteURL      string // base URL for absolute media file links, e.g. https://example.com
+	MediaStorage string // "local" (default) or "s3"
+	MediaDir     string // derived: parent of ContentDir + "/media"
 
 	// SMTP (newsletter)
 	SMTPHost     string // e.g. smtp.mailgun.org
@@ -49,10 +55,13 @@ func Load(envFile string) (*Config, error) {
 		return nil, fmt.Errorf("JWT_SECRET is required")
 	}
 
+	contentDir := getEnv("CONTENT_DIR", "content/blog")
+	mediaDir := filepath.Join(filepath.Dir(contentDir), "media")
+
 	return &Config{
 		Port:          port,
 		DatabaseURL:   getEnv("DATABASE_URL", "data/folio.db"),
-		ContentDir:    getEnv("CONTENT_DIR", "content/blog"),
+		ContentDir:    contentDir,
 		JWTSecret:     jwtSecret,
 		AdminEmail:    os.Getenv("ADMIN_EMAIL"),
 		AdminPasswd:   os.Getenv("ADMIN_PASSWORD"),
@@ -60,6 +69,9 @@ func Load(envFile string) (*Config, error) {
 		ThemeBuildCmd: getEnv("THEME_BUILD_CMD", "npm run build"),
 		ThemeService:  os.Getenv("THEME_SERVICE"),
 		WebhookSecret: os.Getenv("WEBHOOK_SECRET"),
+		SiteURL:       getEnv("SITE_URL", "http://localhost:8090"),
+		MediaStorage:  getEnv("MEDIA_STORAGE", "local"),
+		MediaDir:      mediaDir,
 		SMTPHost:      os.Getenv("SMTP_HOST"),
 		SMTPPort:      getEnv("SMTP_PORT", "587"),
 		SMTPUsername:  os.Getenv("SMTP_USERNAME"),
