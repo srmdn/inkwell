@@ -108,7 +108,7 @@ func main() {
 	})
 
 	srv := &http.Server{
-		Addr:         ":" + cfg.Port,
+		Addr:         "127.0.0.1:" + cfg.Port,
 		Handler:      r,
 		ReadTimeout:  15 * time.Second,
 		WriteTimeout: 30 * time.Second,
