@@ -159,8 +159,12 @@ export function MarkdownEditor({ value, onChange }: EditorProps) {
 
       if (from === to) {
         const $pos = state.doc.resolve(from)
+        // ProseMirror Mark type is not exported from Milkdown v7 packages
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         if ($pos.marks().some((m: any) => m.type === linkMark)) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           while (from > 0 && state.doc.resolve(from - 1).marks().some((m: any) => m.type === linkMark)) from--
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           while (to < state.doc.content.size && state.doc.resolve(to).marks().some((m: any) => m.type === linkMark)) to++
         }
       }
@@ -171,6 +175,7 @@ export function MarkdownEditor({ value, onChange }: EditorProps) {
         return
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const existing = state.doc.resolve(from).marks().find((m: any) => m.type === linkMark)
       const existingHref = existing?.attrs.href ?? ''
       const url = window.prompt('Link URL (leave empty to remove):', existingHref)

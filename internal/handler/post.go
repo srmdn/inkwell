@@ -18,14 +18,14 @@ import (
 var slugPattern = regexp.MustCompile(`^[a-z0-9]+(?:-[a-z0-9]+)*$`)
 
 type postRequest struct {
-	Slug        string   `json:"slug"`        // new slug for rename on update; ignored on create
+	Slug        string   `json:"slug"` // new slug for rename on update; ignored on create
 	Title       string   `json:"title"`
 	Description string   `json:"description"`
 	Tags        []string `json:"tags"`
 	Draft       bool     `json:"draft"`
 	PublishDate string   `json:"publish_date"`
 	Body        string   `json:"body"`
-	HeroImage   string   `json:"hero_image"`  // base64 data URI; empty = preserve existing on update
+	HeroImage   string   `json:"hero_image"` // base64 data URI; empty = preserve existing on update
 }
 
 type postResponse struct {

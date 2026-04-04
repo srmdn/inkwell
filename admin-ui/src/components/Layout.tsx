@@ -41,6 +41,7 @@ export function Layout({ children }: { children: ReactNode }) {
 
   // Close mobile drawer on route change
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (mobile) setCollapsed(true)
   }, [location.pathname, mobile])
 
