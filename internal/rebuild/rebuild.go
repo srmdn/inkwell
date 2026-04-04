@@ -3,6 +3,7 @@ package rebuild
 import (
 	"bytes"
 	"fmt"
+	"os"
 	"os/exec"
 	"strings"
 	"sync"
@@ -119,6 +120,10 @@ func (rb *Rebuilder) build() (string, error) {
 	parts := strings.Fields(rb.buildCmd)
 	if len(parts) == 0 {
 		return "", fmt.Errorf("THEME_BUILD_CMD is empty")
+	}
+
+	if _, err := os.Stat(rb.themeDir); err != nil {
+		return "", fmt.Errorf("theme directory %q not found — set THEME_DIR in your .env", rb.themeDir)
 	}
 
 	cmd := exec.Command(parts[0], parts[1:]...)

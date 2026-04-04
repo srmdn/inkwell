@@ -986,7 +986,6 @@ body {
 /* ── Milkdown editor ──────────────────────────────────────── */
 
 .editor-wrap {
-  position: relative;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   overflow: clip; /* clip instead of hidden so position:sticky works */
@@ -1060,15 +1059,14 @@ body {
 
 /* Image insert modal */
 .img-modal-overlay {
-  position: absolute;
+  position: fixed;
   inset: 0;
-  z-index: 200;
+  z-index: 1000;
   background: rgba(15, 17, 23, 0.6);
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
-  padding-top: 3rem;
-  border-radius: var(--radius);
+  padding: 1.5rem;
 }
 
 .img-modal {

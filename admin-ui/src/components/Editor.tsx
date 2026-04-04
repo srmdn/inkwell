@@ -160,13 +160,7 @@ export function MarkdownEditor({ value, onChange }: EditorProps) {
         const media = await api.uploadMedia(file)
         const alt = file.name.replace(/\.[^.]+$/, '')
         instanceRef.current?.action((ctx) => {
-          const view = ctx.get(editorViewCtx)
-          const { state, dispatch } = view
-          const imageNode = state.schema.nodes.image
-          if (!imageNode) return
-          const node = imageNode.create({ src: media.url, alt, title: '' })
-          dispatch(state.tr.insert(state.selection.from, node))
-          view.focus()
+          ctx.get(commandsCtx).call('InsertImage', { src: media.url, alt, title: '' })
         })
       } catch {
         // silent: user sees no insertion — upload error is lost gracefully
@@ -219,15 +213,9 @@ export function MarkdownEditor({ value, onChange }: EditorProps) {
   }
 
   function insertImageNode(src: string, alt: string) {
-    instanceRef.current?.action((ctx) => {
-      const view = ctx.get(editorViewCtx)
-      const { state, dispatch } = view
-      const imageNode = state.schema.nodes.image
-      if (!imageNode) return
-      const node = imageNode.create({ src, alt, title: '' })
-      dispatch(state.tr.insert(state.selection.from, node))
-      view.focus()
-    })
+    // Use Milkdown's built-in InsertImage command which does replaceSelectionWith correctly.
+    // callCommand focuses the editor after dispatching.
+    callCommand('InsertImage', { src, alt, title: '' })
   }
 
   function handleImageBtn() {
