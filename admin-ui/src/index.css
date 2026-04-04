@@ -986,6 +986,7 @@ body {
 /* ── Milkdown editor ──────────────────────────────────────── */
 
 .editor-wrap {
+  position: relative;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   overflow: clip; /* clip instead of hidden so position:sticky works */
@@ -1049,6 +1050,61 @@ body {
   height: 18px;
   background: var(--border);
   margin: 0 0.25rem;
+}
+
+.tb-upload-indicator {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-left: 0.25rem;
+}
+
+/* Image insert modal */
+.img-modal-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 200;
+  background: rgba(15, 17, 23, 0.6);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 3rem;
+  border-radius: var(--radius);
+}
+
+.img-modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.img-modal-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.img-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+/* Upload banner inside editor */
+.editor-upload-banner {
+  padding: 0.375rem 1rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  background: rgba(74, 222, 128, 0.06);
+  border-bottom: 1px solid var(--border);
+  text-align: center;
 }
 
 .editor-body {

@@ -7,8 +7,9 @@ import { listener, listenerCtx } from '@milkdown/plugin-listener'
 import {
   Bold, Italic, Strikethrough, Code, Code2,
   Heading1, Heading2, Heading3,
-  Quote, List, ListOrdered, Minus, Pilcrow, Link, Table,
+  Quote, List, ListOrdered, Minus, Pilcrow, Link, Table, Image,
 } from 'lucide-react'
+import { api } from '../lib/api'
 
 interface EditorProps {
   value: string
@@ -58,6 +59,7 @@ function Sep() {
 
 export function MarkdownEditor({ value, onChange }: EditorProps) {
   const editorRef = useRef<HTMLDivElement>(null)
+  const wrapRef = useRef<HTMLDivElement>(null)
   const toolbarRef = useRef<HTMLDivElement>(null)
   const instanceRef = useRef<Editor | null>(null)
   const onChangeRef = useRef(onChange)
@@ -65,6 +67,14 @@ export function MarkdownEditor({ value, onChange }: EditorProps) {
 
   const [activeMarks, setActiveMarks] = useState<Set<string>>(new Set())
   const [activeNode, setActiveNode] = useState<{ type: string; level?: number } | null>(null)
+
+  // Image modal state
+  const [imgModalOpen, setImgModalOpen] = useState(false)
+  const [imgUrl, setImgUrl] = useState('')
+  const [imgAlt, setImgAlt] = useState('')
+
+  // Paste/drop upload state
+  const [uploading, setUploading] = useState(false)
 
   useEffect(() => {
     if (!editorRef.current) return
@@ -139,11 +149,98 @@ export function MarkdownEditor({ value, onChange }: EditorProps) {
     return () => cancelAnimationFrame(rafId)
   }, [])
 
+  // Paste/drop image upload handlers
+  useEffect(() => {
+    const el = wrapRef.current
+    if (!el) return
+
+    async function doUpload(file: File) {
+      setUploading(true)
+      try {
+        const media = await api.uploadMedia(file)
+        const alt = file.name.replace(/\.[^.]+$/, '')
+        instanceRef.current?.action((ctx) => {
+          const view = ctx.get(editorViewCtx)
+          const { state, dispatch } = view
+          const imageNode = state.schema.nodes.image
+          if (!imageNode) return
+          const node = imageNode.create({ src: media.url, alt, title: '' })
+          dispatch(state.tr.insert(state.selection.from, node))
+          view.focus()
+        })
+      } catch {
+        // silent: user sees no insertion — upload error is lost gracefully
+      } finally {
+        setUploading(false)
+      }
+    }
+
+    function onPaste(e: ClipboardEvent) {
+      const item = Array.from(e.clipboardData?.items ?? [])
+        .find(i => i.kind === 'file' && i.type.startsWith('image/'))
+      if (!item) return
+      const file = item.getAsFile()
+      if (!file) return
+      e.preventDefault()
+      e.stopPropagation()
+      void doUpload(file)
+    }
+
+    function onDrop(e: DragEvent) {
+      const file = Array.from(e.dataTransfer?.files ?? [])
+        .find(f => f.type.startsWith('image/'))
+      if (!file) return
+      e.preventDefault()
+      e.stopPropagation()
+      void doUpload(file)
+    }
+
+    function onDragOver(e: DragEvent) {
+      const has = Array.from(e.dataTransfer?.items ?? [])
+        .some(i => i.kind === 'file' && i.type.startsWith('image/'))
+      if (has) e.preventDefault()
+    }
+
+    el.addEventListener('paste', onPaste, { capture: true })
+    el.addEventListener('drop', onDrop, { capture: true })
+    el.addEventListener('dragover', onDragOver, { capture: true })
+
+    return () => {
+      el.removeEventListener('paste', onPaste, { capture: true })
+      el.removeEventListener('drop', onDrop, { capture: true })
+      el.removeEventListener('dragover', onDragOver, { capture: true })
+    }
+  }, [])
 
   function callCommand(key: string, payload?: unknown) {
     instanceRef.current?.action((ctx) => {
       ctx.get(commandsCtx).call(key, payload)
     })
+  }
+
+  function insertImageNode(src: string, alt: string) {
+    instanceRef.current?.action((ctx) => {
+      const view = ctx.get(editorViewCtx)
+      const { state, dispatch } = view
+      const imageNode = state.schema.nodes.image
+      if (!imageNode) return
+      const node = imageNode.create({ src, alt, title: '' })
+      dispatch(state.tr.insert(state.selection.from, node))
+      view.focus()
+    })
+  }
+
+  function handleImageBtn() {
+    setImgUrl('')
+    setImgAlt('')
+    setImgModalOpen(true)
+  }
+
+  function handleImageInsert() {
+    const src = imgUrl.trim()
+    if (!src) return
+    insertImageNode(src, imgAlt.trim())
+    setImgModalOpen(false)
   }
 
   function handleLink() {
@@ -224,7 +321,7 @@ export function MarkdownEditor({ value, onChange }: EditorProps) {
   }
 
   return (
-    <div className="editor-wrap">
+    <div ref={wrapRef} className="editor-wrap">
       <div ref={toolbarRef} className="editor-toolbar">
         {/* Block type */}
         <TbBtn onClick={() => callCommand(CMD.PARAGRAPH)} title="Paragraph" active={activeNode?.type === 'paragraph'}>
@@ -280,7 +377,60 @@ export function MarkdownEditor({ value, onChange }: EditorProps) {
         <TbBtn onClick={() => callCommand(CMD.HR)} title="Divider">
           <Minus size={14} />
         </TbBtn>
+
+        <Sep />
+
+        {/* Image */}
+        <TbBtn onClick={handleImageBtn} title="Insert image by URL">
+          <Image size={14} />
+        </TbBtn>
+
+        {uploading && <span className="tb-upload-indicator">Uploading...</span>}
       </div>
+
+      {/* Image URL modal */}
+      {imgModalOpen && (
+        <div className="img-modal-overlay" onMouseDown={() => setImgModalOpen(false)}>
+          <div className="img-modal" onMouseDown={(e) => e.stopPropagation()}>
+            <div className="img-modal-title">Insert image</div>
+            <div className="field">
+              <label>URL</label>
+              <input
+                type="url"
+                value={imgUrl}
+                onChange={(e) => setImgUrl(e.target.value)}
+                placeholder="https://example.com/image.png"
+                autoFocus
+                onKeyDown={(e) => { if (e.key === 'Enter') handleImageInsert(); if (e.key === 'Escape') setImgModalOpen(false) }}
+              />
+            </div>
+            <div className="field">
+              <label>Alt text</label>
+              <input
+                type="text"
+                value={imgAlt}
+                onChange={(e) => setImgAlt(e.target.value)}
+                placeholder="Image description"
+                onKeyDown={(e) => { if (e.key === 'Enter') handleImageInsert(); if (e.key === 'Escape') setImgModalOpen(false) }}
+              />
+            </div>
+            <div className="img-modal-actions">
+              <button className="btn-sm btn-sm-ghost" onMouseDown={() => setImgModalOpen(false)}>Cancel</button>
+              <button
+                className="btn-sm btn-sm-primary"
+                onMouseDown={handleImageInsert}
+                disabled={!imgUrl.trim()}
+              >
+                Insert
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {uploading && (
+        <div className="editor-upload-banner">Uploading image...</div>
+      )}
 
       <div
         ref={editorRef}
