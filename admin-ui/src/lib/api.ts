@@ -32,6 +32,15 @@ export interface SiteSettings {
   social_linkedin: string
 }
 
+export interface MediaFile {
+  key: string
+  filename: string
+  content_type: string
+  size: number
+  url: string
+  created_at: string
+}
+
 export interface RebuildStatus {
   status: 'idle' | 'running' | 'success' | 'failed'
   output: string
@@ -148,4 +157,30 @@ export const api = {
 
   updateSettings: (settings: SiteSettings) =>
     request<void>('PUT', '/api/admin/settings', settings, true),
+
+  listMedia: () => request<MediaFile[]>('GET', '/api/admin/media'),
+
+  uploadMedia: async (file: File): Promise<MediaFile> => {
+    const csrf = await getCSRF()
+    const form = new FormData()
+    form.append('file', file)
+    const res = await fetch('/api/admin/media', {
+      method: 'POST',
+      headers: { 'X-CSRF-Token': csrf },
+      credentials: 'include',
+      body: form,
+    })
+    if (res.status === 401) {
+      csrfToken = null
+      throw new Error('unauthenticated')
+    }
+    if (!res.ok) {
+      const text = await res.text()
+      throw new Error(text || `HTTP ${res.status}`)
+    }
+    return res.json() as Promise<MediaFile>
+  },
+
+  deleteMedia: (key: string) =>
+    request<void>('DELETE', `/api/admin/media/${encodeURIComponent(key)}`, undefined, true),
 }

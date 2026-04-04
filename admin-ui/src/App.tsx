@@ -7,6 +7,7 @@ import { Posts } from './pages/Posts'
 import { PostEditor } from './pages/PostEditor'
 import { Subscribers } from './pages/Subscribers'
 import { Settings } from './pages/Settings'
+import { Media } from './pages/Media'
 import './index.css'
 
 export default function App() {
@@ -51,6 +52,16 @@ export default function App() {
               <ProtectedRoute>
                 <Layout>
                   <Subscribers />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/media"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <Media />
                 </Layout>
               </ProtectedRoute>
             }
