@@ -27,15 +27,3 @@ Defer domain purchase and landing page until after v0.1 ships.
 - GitHub repo (`github.com/srmdn/foliocms`) is the canonical project URL
   until a domain is purchased
 - README must be clear enough to serve as the project landing page for now
-
-## Post-v0.1 Actions
-
-When v0.1 ships, revisit:
-
-- [ ] Check domain availability: `getfolio.com`, `foliocms.com`,
-      `folio.dev`, `folio.app`, `tryfolio.com`
-- [ ] Build a static landing page (Astro, hosted on existing VPS or
-      GitHub Pages)
-- [ ] Update README to point to new domain once acquired
-- [ ] Consider a separate GitHub org (`folio-cms`) if the project
-      grows beyond a single maintainer

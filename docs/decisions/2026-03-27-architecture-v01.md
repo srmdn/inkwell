@@ -57,9 +57,3 @@ long-term and can replace this in a future version without breaking the API.
 - Theme repo must be created separately before a full end-to-end install is possible
 - Migration files must be committed and never deleted
 - `--setup` flag must be documented clearly in the README
-
-## Follow-up Actions
-
-- [x] Create `foliocms-theme-default` repo (separate, Astro SSR)
-- [x] Write migration runner in `internal/db/`
-- [x] Document `--setup` flow in README
