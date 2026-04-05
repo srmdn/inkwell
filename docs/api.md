@@ -335,3 +335,128 @@ Get the current rebuild status.
 | `running` | Build in progress |
 | `success` | Last build succeeded |
 | `failed` | Last build failed; see `error` field |
+
+---
+
+### `GET /api/settings`
+
+Get all site settings. Public endpoint — intended for themes to read site metadata.
+
+**Response `200`**
+```json
+{
+  "site_name": "My Blog",
+  "site_description": "A personal blog about Go and systems.",
+  "social_github": "https://github.com/example",
+  "social_twitter": "https://twitter.com/example",
+  "social_linkedin": ""
+}
+```
+
+Returns a flat key/value object. Keys with no value set return an empty string.
+
+---
+
+### `GET /api/admin/settings`
+
+Get all site settings (protected). Same response shape as `GET /api/settings`.
+
+---
+
+### `PUT /api/admin/settings`
+
+Update one or more site settings (protected + CSRF).
+
+**Request body**
+```json
+{
+  "site_name": "My Blog",
+  "site_description": "A personal blog about Go and systems.",
+  "social_github": "https://github.com/example",
+  "social_twitter": "",
+  "social_linkedin": ""
+}
+```
+
+Only known keys are accepted. Unknown keys return `400`.
+
+| Key | Description |
+|-----|-------------|
+| `site_name` | Display name of the site |
+| `site_description` | Short description used in meta tags |
+| `social_github` | GitHub profile or repo URL |
+| `social_twitter` | Twitter/X profile URL |
+| `social_linkedin` | LinkedIn profile URL |
+
+**Response `204`** No content.
+
+**Errors**: `400` invalid JSON or unknown key
+
+---
+
+### `POST /api/admin/media`
+
+Upload an image file (protected + CSRF). Accepts `multipart/form-data`.
+
+**Form field**: `file` — the image to upload.
+
+**Constraints**:
+- Max file size: 10 MB
+- Allowed types: `image/jpeg`, `image/png`, `image/gif`, `image/webp`, `image/svg+xml`
+- Content type is detected from file bytes, not the `Content-Type` header
+
+**Response `201`**
+```json
+{
+  "key": "550e8400-e29b-41d4-a716-446655440000-photo.jpg",
+  "filename": "photo.jpg",
+  "content_type": "image/jpeg",
+  "size": 204800,
+  "url": "https://example.com/media/550e8400-e29b-41d4-a716-446655440000-photo.jpg",
+  "created_at": "2026-04-01T10:00:00Z"
+}
+```
+
+**Errors**: `400` missing file or invalid form, `415` unsupported file type, `413` file too large
+
+---
+
+### `GET /api/admin/media`
+
+List all uploaded files (protected + CSRF). Returns newest first.
+
+**Response `200`**
+```json
+[
+  {
+    "key": "550e8400-e29b-41d4-a716-446655440000-photo.jpg",
+    "filename": "photo.jpg",
+    "content_type": "image/jpeg",
+    "size": 204800,
+    "url": "https://example.com/media/550e8400-e29b-41d4-a716-446655440000-photo.jpg",
+    "created_at": "2026-04-01T10:00:00Z"
+  }
+]
+```
+
+Returns `[]` if no files have been uploaded.
+
+---
+
+### `DELETE /api/admin/media/{key}`
+
+Delete an uploaded file by key (protected + CSRF). Removes the file from storage and the database record.
+
+**Response `204`** No content.
+
+**Errors**: `400` missing key, `500` storage or database error
+
+---
+
+## Static File Serving
+
+### `GET /media/{key}`
+
+Serves an uploaded file by key. Only available when `MEDIA_STORAGE=local` (default).
+When using S3-compatible storage, files are served directly from the bucket via the `url` field
+returned by the upload and list endpoints.

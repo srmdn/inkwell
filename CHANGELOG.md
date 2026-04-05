@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.4.0 (2026-04-04)
+
+Media library, site settings, and S3-compatible storage.
+
+- **Media library**: upload, browse, and delete images from the dashboard (`/admin/media`)
+- **Editor image insert**: insert images by URL from the toolbar; paste an image directly into the editor to auto-upload
+- **S3-compatible storage**: set `MEDIA_STORAGE=s3` to store files in AWS S3, Cloudflare R2, NevaObjects, MinIO, or any S3-compatible provider
+- **Site settings**: editable site metadata (`site_name`, `site_description`, `social_github`, `social_twitter`, `social_linkedin`) stored in the database and exposed via `GET /api/settings` for themes
+- New env vars: `SITE_URL`, `MEDIA_STORAGE`, `S3_ENDPOINT`, `S3_BUCKET`, `S3_REGION`, `S3_ACCESS_KEY`, `S3_SECRET_KEY`, `S3_PUBLIC_URL`
+- `docs/api.md`, `docs/configuration.md`, `README.md` updated with all new features
+
+---
+
 ## v0.3.0 (2026-04-01)
 
 Built-in admin dashboard. No separate service or install step required.

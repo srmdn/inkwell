@@ -82,6 +82,8 @@ Key variables:
 | `THEME_DIR` | `theme` | Path to the theme directory |
 | `THEME_BUILD_CMD` | `npm run build` | Command to rebuild the theme |
 | `THEME_SERVICE` | (none) | systemd service name to restart after rebuild |
+| `SITE_URL` | `http://localhost:8090` | Base URL used for media file URLs |
+| `MEDIA_STORAGE` | `local` | Storage backend: `local` or `s3` |
 
 ## Admin Dashboard
 
@@ -91,10 +93,41 @@ Folio includes a built-in admin dashboard at `/admin`. No separate service or in
 |------|-------------|
 | `/admin/login` | Sign in |
 | `/admin/posts` | Create, edit, publish, and delete posts |
+| `/admin/media` | Upload, browse, and delete images |
 | `/admin/subscribers` | View and remove newsletter subscribers |
-| `/admin/settings` | Trigger a site rebuild and view build status |
+| `/admin/settings` | Edit site settings, trigger a rebuild, view build status |
 
 The post editor uses [Milkdown](https://milkdown.dev), a WYSIWYG Markdown editor with support for headings, lists, code blocks, tables, and more. Press **Cmd+S** (or **Ctrl+S** on Windows/Linux) to save at any time.
+
+## Media Library
+
+The media library lets you upload images from the dashboard and insert them directly into posts.
+
+By default, images are stored on disk in a `media/` directory next to `CONTENT_DIR` and served at `/media/{key}`. To use S3-compatible object storage instead (AWS S3, Cloudflare R2, NevaObjects, MinIO), set `MEDIA_STORAGE=s3` and the `S3_*` variables in `.env`:
+
+```env
+MEDIA_STORAGE=s3
+S3_ENDPOINT=https://s3.nevaobjects.id
+S3_BUCKET=my-bucket
+S3_REGION=auto
+S3_ACCESS_KEY=your-access-key
+S3_SECRET_KEY=your-secret-key
+S3_PUBLIC_URL=https://s3.nevaobjects.id/my-bucket
+```
+
+See [docs/configuration.md](docs/configuration.md) for provider-specific endpoint examples.
+
+## Site Settings
+
+Site metadata is stored in the database and can be updated from the dashboard at `/admin/settings` without restarting the server. The public `GET /api/settings` endpoint exposes these values to themes.
+
+| Key | Description |
+|-----|-------------|
+| `site_name` | Display name of the site |
+| `site_description` | Short description used in meta tags |
+| `social_github` | GitHub profile or repo URL |
+| `social_twitter` | Twitter/X profile URL |
+| `social_linkedin` | LinkedIn profile URL |
 
 ## API
 
