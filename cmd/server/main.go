@@ -18,6 +18,7 @@ import (
 	"github.com/srmdn/foliocms/internal/adminui"
 	"github.com/srmdn/foliocms/internal/config"
 	"github.com/srmdn/foliocms/internal/db"
+	"github.com/srmdn/foliocms/internal/demo"
 	"github.com/srmdn/foliocms/internal/handler"
 	"github.com/srmdn/foliocms/internal/media"
 	"github.com/srmdn/foliocms/internal/middleware"
@@ -59,6 +60,13 @@ func main() {
 		}
 		fmt.Println("Setup complete. Run folio without --setup to start the server.")
 		os.Exit(0)
+	}
+
+	if cfg.DemoMode {
+		log.Println("demo mode: seeding demo content")
+		if err := demo.Apply(database, cfg); err != nil {
+			log.Fatalf("demo seed: %v", err)
+		}
 	}
 
 	r := chi.NewRouter()
@@ -105,6 +113,7 @@ func main() {
 	r.Post("/api/subscribe", h.Subscribe)
 	r.Get("/api/unsubscribe", h.Unsubscribe)
 	r.Get("/api/settings", h.GetPublicSettings)
+	r.Get("/api/demo", h.DemoInfo)
 
 	// Protected routes (JWT + CSRF)
 	r.Group(func(r chi.Router) {
@@ -128,6 +137,7 @@ func main() {
 			r.Post("/api/admin/media", h.UploadMedia)
 			r.Get("/api/admin/media", h.ListMedia)
 			r.Delete("/api/admin/media/{key}", h.DeleteMedia)
+			r.Post("/api/admin/demo/reset", h.DemoReset)
 		})
 	})
 

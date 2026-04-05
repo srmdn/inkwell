@@ -2,6 +2,7 @@ import { NavLink, useNavigate, useLocation } from 'react-router-dom'
 import { useState, useEffect, useCallback } from 'react'
 import type { ReactNode } from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import { api } from '../lib/api'
 
 const SIDEBAR_KEY = 'folio-sidebar-collapsed'
 const MOBILE_BREAKPOINT = 1024
@@ -14,6 +15,8 @@ export function Layout({ children }: { children: ReactNode }) {
   const { logout } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
+  const [demoMode, setDemoMode] = useState(false)
+  const [resetting, setResetting] = useState(false)
 
   // Desktop: collapsed = icon-only. Mobile: open = drawer visible.
   const [collapsed, setCollapsed] = useState<boolean>(() => {
@@ -53,9 +56,27 @@ export function Layout({ children }: { children: ReactNode }) {
     })
   }, [mobile])
 
+  useEffect(() => {
+    api.getDemo().then((info) => setDemoMode(info.demo)).catch(() => {})
+  }, [])
+
   async function handleLogout() {
     await logout()
     navigate('/admin/login', { replace: true })
+  }
+
+  async function handleReset() {
+    if (!confirm('Reset the demo? All changes will be lost.')) return
+    setResetting(true)
+    try {
+      await api.resetDemo()
+      navigate('/admin/posts', { replace: true })
+      window.location.reload()
+    } catch {
+      alert('Reset failed. Please try again.')
+    } finally {
+      setResetting(false)
+    }
   }
 
   const sidebarOpen = !collapsed
@@ -153,6 +174,20 @@ export function Layout({ children }: { children: ReactNode }) {
         </nav>
 
         <div className="sidebar-footer">
+          {demoMode && (
+            <button
+              className="sidebar-nav-link sidebar-reset-demo"
+              onClick={handleReset}
+              disabled={resetting}
+              title={collapsed && !mobile ? 'Reset Demo' : undefined}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                <path d="M3 3v5h5" />
+              </svg>
+              {sidebarOpen && <span>{resetting ? 'Resetting...' : 'Reset Demo'}</span>}
+            </button>
+          )}
           <button
             className="sidebar-nav-link"
             onClick={handleLogout}

@@ -41,6 +41,12 @@ export interface MediaFile {
   created_at: string
 }
 
+export interface DemoInfo {
+  demo: boolean
+  email?: string
+  password?: string
+}
+
 export interface RebuildStatus {
   status: 'idle' | 'running' | 'success' | 'failed'
   output: string
@@ -183,4 +189,8 @@ export const api = {
 
   deleteMedia: (key: string) =>
     request<void>('DELETE', `/api/admin/media/${encodeURIComponent(key)}`, undefined, true),
+
+  getDemo: () => request<DemoInfo>('GET', '/api/demo'),
+
+  resetDemo: () => request<void>('POST', '/api/admin/demo/reset', undefined, true),
 }

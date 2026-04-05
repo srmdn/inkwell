@@ -38,6 +38,11 @@ type Config struct {
 	S3SecretKey string // secret access key
 	S3PublicURL string // base URL for public file access, e.g. https://s3.nevaobjects.id/my-bucket
 
+	// Demo mode
+	DemoMode   bool   // if true, seed demo content on startup and enable reset endpoint
+	DemoEmail  string // demo login email (default: demo@foliocms.com)
+	DemoPasswd string // demo login password (default: demo1234)
+
 	// SMTP (newsletter)
 	SMTPHost     string // e.g. smtp.mailgun.org
 	SMTPPort     string // e.g. 587
@@ -86,6 +91,9 @@ func Load(envFile string) (*Config, error) {
 		S3AccessKey:   os.Getenv("S3_ACCESS_KEY"),
 		S3SecretKey:   os.Getenv("S3_SECRET_KEY"),
 		S3PublicURL:   os.Getenv("S3_PUBLIC_URL"),
+		DemoMode:      os.Getenv("DEMO_MODE") == "true",
+		DemoEmail:     getEnv("DEMO_EMAIL", "demo@foliocms.com"),
+		DemoPasswd:    getEnv("DEMO_PASSWD", "demo1234"),
 		SMTPHost:      os.Getenv("SMTP_HOST"),
 		SMTPPort:      getEnv("SMTP_PORT", "587"),
 		SMTPUsername:  os.Getenv("SMTP_USERNAME"),

@@ -72,6 +72,50 @@ body {
   gap: 1.25rem;
 }
 
+/* Demo banner (login page) */
+
+.demo-banner {
+  margin-top: 1.25rem;
+  background: color-mix(in srgb, var(--accent) 8%, var(--bg-card));
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  border-radius: var(--radius);
+  padding: 0.875rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.demo-banner-label {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.demo-banner-creds {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.875rem;
+  font-family: monospace;
+  color: var(--text);
+}
+
+.demo-banner-fill {
+  align-self: flex-start;
+  margin-top: 0.25rem;
+  background: none;
+  border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent);
+  border-radius: var(--radius);
+  color: var(--accent);
+  font-size: 0.8125rem;
+  padding: 0.3rem 0.75rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.demo-banner-fill:hover {
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
 /* Form fields */
 
 .field {
@@ -350,12 +394,22 @@ body {
 .sidebar-footer {
   padding: 0.625rem 0.5rem;
   border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.sidebar-reset-demo {
+  color: var(--accent) !important;
+}
+
+.sidebar-reset-demo:hover {
+  background: color-mix(in srgb, var(--accent) 8%, transparent) !important;
 }
 
 .sidebar-collapsed .sidebar-footer {
   padding: 0.625rem 0;
-  display: flex;
-  justify-content: center;
+  align-items: center;
 }
 
 .sidebar-collapsed .sidebar-footer .sidebar-nav-link {
