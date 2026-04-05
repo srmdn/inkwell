@@ -30,6 +30,14 @@ type Config struct {
 	MediaStorage string // "local" (default) or "s3"
 	MediaDir     string // derived: parent of ContentDir + "/media"
 
+	// S3 (used when MediaStorage = "s3")
+	S3Endpoint  string // S3-compatible API endpoint, e.g. https://s3.nevaobjects.id
+	S3Bucket    string // bucket name
+	S3Region    string // region (use "auto" for providers that don't require one)
+	S3AccessKey string // access key ID
+	S3SecretKey string // secret access key
+	S3PublicURL string // base URL for public file access, e.g. https://s3.nevaobjects.id/my-bucket
+
 	// SMTP (newsletter)
 	SMTPHost     string // e.g. smtp.mailgun.org
 	SMTPPort     string // e.g. 587
@@ -72,6 +80,12 @@ func Load(envFile string) (*Config, error) {
 		SiteURL:       getEnv("SITE_URL", "http://localhost:8090"),
 		MediaStorage:  getEnv("MEDIA_STORAGE", "local"),
 		MediaDir:      mediaDir,
+		S3Endpoint:    os.Getenv("S3_ENDPOINT"),
+		S3Bucket:      os.Getenv("S3_BUCKET"),
+		S3Region:      getEnv("S3_REGION", "auto"),
+		S3AccessKey:   os.Getenv("S3_ACCESS_KEY"),
+		S3SecretKey:   os.Getenv("S3_SECRET_KEY"),
+		S3PublicURL:   os.Getenv("S3_PUBLIC_URL"),
 		SMTPHost:      os.Getenv("SMTP_HOST"),
 		SMTPPort:      getEnv("SMTP_PORT", "587"),
 		SMTPUsername:  os.Getenv("SMTP_USERNAME"),

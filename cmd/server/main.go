@@ -74,14 +74,27 @@ func main() {
 	h := handler.New(database, cfg)
 	rb := rebuild.New(cfg.ThemeDir, cfg.ThemeBuildCmd, cfg.ThemeService)
 	h.SetRebuilder(rb)
-	h.SetMediaDriver(media.NewLocalDriver(cfg.MediaDir, cfg.SiteURL))
+	if cfg.MediaStorage == "s3" {
+		h.SetMediaDriver(media.NewS3Driver(
+			cfg.S3Endpoint,
+			cfg.S3Bucket,
+			cfg.S3Region,
+			cfg.S3AccessKey,
+			cfg.S3SecretKey,
+			cfg.S3PublicURL,
+		))
+	} else {
+		h.SetMediaDriver(media.NewLocalDriver(cfg.MediaDir, cfg.SiteURL))
+	}
 
 	// Admin SPA (embedded React build)
 	r.Handle("/admin", adminui.Handler())
 	r.Handle("/admin/*", adminui.Handler())
 
-	// Serve local media files
-	r.Handle("/media/*", http.StripPrefix("/media/", http.FileServer(http.Dir(cfg.MediaDir))))
+	// Serve local media files (local driver only; S3 files are served from the bucket directly)
+	if cfg.MediaStorage != "s3" {
+		r.Handle("/media/*", http.StripPrefix("/media/", http.FileServer(http.Dir(cfg.MediaDir))))
+	}
 
 	// Public routes
 	r.Post("/api/login", h.Login)
