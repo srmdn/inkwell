@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.6.1 (2026-04-06)
+
+- **Fix**: `GET /api/posts/:slug` now includes `hero_image` as a base64 data URI in the response; it was previously only returned by the admin endpoint
+
+---
+
 ## v0.6.0 (2026-04-06)
 
 Bug fixes for the rebuild pipeline.
