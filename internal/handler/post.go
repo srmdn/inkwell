@@ -99,7 +99,12 @@ func (h *Handler) GetPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeJSON(w, http.StatusOK, postResponse{Post: post, Body: pf.Body})
+	heroImage := ""
+	if pf.Frontmatter.HeroImage != "" {
+		heroImage, _ = store.ReadHeroImageAsDataURI(slug, pf.Frontmatter.HeroImage)
+	}
+
+	writeJSON(w, http.StatusOK, postResponse{Post: post, Body: pf.Body, HeroImage: heroImage})
 }
 
 // GetAdminPost returns a single post regardless of draft status (admin).
