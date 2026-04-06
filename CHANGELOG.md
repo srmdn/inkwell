@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.6.0 (2026-04-06)
+
+Bug fixes for the rebuild pipeline.
+
+- **Fix**: `THEME_SERVICE` restart now uses `sudo systemctl` so it works when the backend runs as a non-privileged user
+- **Fix**: Astro telemetry no longer blocks the rebuild subprocess; `ASTRO_TELEMETRY_DISABLED=1` is injected into the subprocess environment
+
+---
+
 ## v0.5.0 (2026-04-06)
 
 Demo instance and S3-compatible storage.
