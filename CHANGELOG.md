@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.5.0 (2026-04-06)
+
+Demo instance and S3-compatible storage.
+
+- **demo.foliocms.com**: live demo with public credentials, pre-seeded content, and a one-click reset button
+- **Demo mode**: set `DEMO_MODE=true` to enable; `DEMO_EMAIL` and `DEMO_PASSWD` control the demo account (defaults: `demo@foliocms.com` / `demo1234`)
+- **Demo reset**: `POST /api/admin/demo/reset` wipes all posts and media, re-seeds sample content, and restores the demo user
+- **Login page banner**: shows credentials and a "Fill credentials" button when demo mode is active
+- **S3Driver**: store media in AWS S3, Cloudflare R2, NevaObjects, MinIO, or any S3-compatible provider (moved from v0.4.0 to this release)
+
+---
+
 ## v0.4.0 (2026-04-04)
 
 Media library, site settings, and S3-compatible storage.
