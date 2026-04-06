@@ -141,7 +141,7 @@ func (rb *Rebuilder) build() (string, error) {
 }
 
 func restartService(name string) error {
-	cmd := exec.Command("systemctl", "restart", name)
+	cmd := exec.Command("sudo", "systemctl", "restart", name)
 	var buf bytes.Buffer
 	cmd.Stderr = &buf
 	if err := cmd.Run(); err != nil {
