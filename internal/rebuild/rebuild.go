@@ -128,6 +128,7 @@ func (rb *Rebuilder) build() (string, error) {
 
 	cmd := exec.Command(parts[0], parts[1:]...)
 	cmd.Dir = rb.themeDir
+	cmd.Env = append(os.Environ(), "ASTRO_TELEMETRY_DISABLED=1")
 
 	var buf bytes.Buffer
 	cmd.Stdout = &buf
