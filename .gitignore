@@ -24,6 +24,10 @@ internal/adminui/dist/
 # Node
 admin-ui/node_modules/
 
+# Local dev data
+staging-data/
+*.bak
+
 # OS
 .DS_Store
 Thumbs.db
