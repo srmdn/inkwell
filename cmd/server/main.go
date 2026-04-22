@@ -105,6 +105,7 @@ func main() {
 	}
 
 	// Public routes
+	r.Get("/feed.xml", h.GetFeed)
 	r.Post("/api/login", h.Login)
 	r.Post("/api/logout", h.Logout)
 	r.Get("/api/posts", h.ListPosts)

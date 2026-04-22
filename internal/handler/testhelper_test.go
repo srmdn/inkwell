@@ -37,6 +37,11 @@ CREATE TABLE IF NOT EXISTS subscribers (
     token         TEXT NOT NULL UNIQUE,
     subscribed_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS settings (
+    key   TEXT PRIMARY KEY,
+    value TEXT NOT NULL DEFAULT ''
+);
 `
 
 func newTestDB(t *testing.T) *db.DB {
