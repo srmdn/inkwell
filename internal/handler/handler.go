@@ -11,18 +11,27 @@ import (
 	"github.com/srmdn/foliocms/internal/rebuild"
 )
 
+// MailSender is satisfied by *mailer.Mailer and any test double.
+type MailSender interface {
+	Send(to, subject, body string) error
+}
+
 // Handler holds shared dependencies for all HTTP handlers.
 type Handler struct {
 	db          *db.DB
 	cfg         *config.Config
 	rebuilder   *rebuild.Rebuilder
-	mailer      *mailer.Mailer
+	mailer      MailSender
 	mediaDriver media.MediaDriver
 }
 
 func New(database *db.DB, cfg *config.Config) *Handler {
 	m := mailer.New(cfg.SMTPHost, cfg.SMTPPort, cfg.SMTPUsername, cfg.SMTPPassword, cfg.SMTPFrom)
 	return &Handler{db: database, cfg: cfg, mailer: m}
+}
+
+func (h *Handler) SetMailer(m MailSender) {
+	h.mailer = m
 }
 
 func writeJSON(w http.ResponseWriter, status int, v any) {

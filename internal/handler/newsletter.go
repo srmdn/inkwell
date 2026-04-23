@@ -121,34 +121,46 @@ func (h *Handler) SendNewsletter(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rows, err := h.db.Query(`SELECT email FROM subscribers`)
+	rows, err := h.db.Query(`SELECT email, token FROM subscribers`)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "could not fetch subscribers")
 		return
 	}
 	defer rows.Close()
 
-	var emails []string
+	type recipient struct {
+		email string
+		token string
+	}
+	var recipients []recipient
 	for rows.Next() {
-		var email string
-		if err := rows.Scan(&email); err != nil {
+		var rc recipient
+		if err := rows.Scan(&rc.email, &rc.token); err != nil {
 			writeError(w, http.StatusInternalServerError, "scan error")
 			return
 		}
-		emails = append(emails, email)
+		recipients = append(recipients, rc)
 	}
 
-	if len(emails) == 0 {
+	if len(recipients) == 0 {
 		writeJSON(w, http.StatusOK, map[string]any{"sent": 0, "message": "no subscribers"})
 		return
 	}
 
-	if err := h.mailer.SendMany(emails, req.Subject, req.Body); err != nil {
-		writeError(w, http.StatusInternalServerError, err.Error())
+	var sendErrs []string
+	for _, rc := range recipients {
+		unsubURL := h.cfg.SiteURL + "/api/unsubscribe?token=" + rc.token
+		personalizedBody := req.Body + "\n\n--\nTo unsubscribe, visit: " + unsubURL
+		if err := h.mailer.Send(rc.email, req.Subject, personalizedBody); err != nil {
+			sendErrs = append(sendErrs, rc.email+": "+err.Error())
+		}
+	}
+	if len(sendErrs) > 0 {
+		writeError(w, http.StatusInternalServerError, "send failures: "+strings.Join(sendErrs, "; "))
 		return
 	}
 
-	writeJSON(w, http.StatusOK, map[string]any{"sent": len(emails)})
+	writeJSON(w, http.StatusOK, map[string]any{"sent": len(recipients)})
 }
 
 func isUniqueErr(err error) bool {
