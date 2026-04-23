@@ -25,6 +25,7 @@ export function Posts() {
   const [error, setError] = useState('')
   const [confirmSlug, setConfirmSlug] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
+  const [duplicating, setDuplicating] = useState<string | null>(null)
   const [filter, setFilter] = useState<FilterTab>('all')
   const navigate = useNavigate()
 
@@ -38,6 +39,18 @@ export function Posts() {
       setPosts(data ?? [])
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load posts')
+    }
+  }
+
+  async function handleDuplicate(slug: string) {
+    setDuplicating(slug)
+    try {
+      const { slug: newSlug } = await api.duplicatePost(slug)
+      navigate(`/admin/posts/${newSlug}/edit`)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to duplicate post')
+    } finally {
+      setDuplicating(null)
     }
   }
 
@@ -163,6 +176,13 @@ export function Posts() {
                             >
                               Edit
                             </Link>
+                            <button
+                              className="btn-sm btn-sm-ghost"
+                              onClick={() => handleDuplicate(post.slug)}
+                              disabled={duplicating === post.slug}
+                            >
+                              {duplicating === post.slug ? '...' : 'Duplicate'}
+                            </button>
                             <button
                               className="btn-sm btn-sm-danger"
                               onClick={() => setConfirmSlug(post.slug)}

@@ -193,4 +193,13 @@ export const api = {
   getDemo: () => request<DemoInfo>('GET', '/api/demo'),
 
   resetDemo: () => request<void>('POST', '/api/admin/demo/reset', undefined, true),
+
+  changePassword: (currentPassword: string, newPassword: string) =>
+    request<void>('PUT', '/api/admin/account/password', {
+      current_password: currentPassword,
+      new_password: newPassword,
+    }, true),
+
+  duplicatePost: (slug: string) =>
+    request<{ slug: string }>('POST', `/api/admin/posts/${slug}/duplicate`, undefined, true),
 }

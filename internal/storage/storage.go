@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -80,6 +81,52 @@ func (s *Storage) Delete(slug string) error {
 func (s *Storage) Exists(slug string) bool {
 	_, err := os.Stat(s.PostPath(slug))
 	return err == nil
+}
+
+// Copy copies a post directory from srcSlug to dstSlug, preserving all assets.
+func (s *Storage) Copy(srcSlug, dstSlug string) error {
+	return copyDir(s.PostDir(srcSlug), s.PostDir(dstSlug))
+}
+
+func copyDir(src, dst string) error {
+	if err := os.MkdirAll(dst, 0755); err != nil {
+		return fmt.Errorf("creating dir %q: %w", dst, err)
+	}
+	entries, err := os.ReadDir(src)
+	if err != nil {
+		return fmt.Errorf("reading dir %q: %w", src, err)
+	}
+	for _, entry := range entries {
+		srcPath := filepath.Join(src, entry.Name())
+		dstPath := filepath.Join(dst, entry.Name())
+		if entry.IsDir() {
+			if err := copyDir(srcPath, dstPath); err != nil {
+				return err
+			}
+		} else {
+			if err := copyFile(srcPath, dstPath); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func copyFile(src, dst string) error {
+	in, err := os.Open(src)
+	if err != nil {
+		return fmt.Errorf("opening %q: %w", src, err)
+	}
+	defer in.Close()
+	out, err := os.Create(dst)
+	if err != nil {
+		return fmt.Errorf("creating %q: %w", dst, err)
+	}
+	defer out.Close()
+	if _, err := io.Copy(out, in); err != nil {
+		return fmt.Errorf("copying %q -> %q: %w", src, dst, err)
+	}
+	return nil
 }
 
 // Rename renames a post directory from oldSlug to newSlug (all assets move with it).

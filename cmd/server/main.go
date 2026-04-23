@@ -129,6 +129,8 @@ func main() {
 			r.Post("/api/admin/posts/{slug}", h.CreatePost)
 			r.Put("/api/admin/posts/{slug}", h.UpdatePost)
 			r.Delete("/api/admin/posts/{slug}", h.DeletePost)
+			r.Post("/api/admin/posts/{slug}/duplicate", h.DuplicatePost)
+			r.Put("/api/admin/account/password", h.ChangePassword)
 			r.Post("/api/admin/rebuild", h.TriggerRebuild)
 			r.Get("/api/admin/rebuild/status", h.RebuildStatus)
 			r.Get("/api/admin/subscribers", h.ListSubscribers)
