@@ -56,7 +56,12 @@ func (h *Handler) Unsubscribe(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusNotFound, "token not found")
 		return
 	}
-	w.WriteHeader(http.StatusNoContent)
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(`<!doctype html><html><head><meta charset="utf-8"><title>Unsubscribed</title>` +
+		`<style>body{font-family:sans-serif;max-width:480px;margin:80px auto;text-align:center;color:#333}` +
+		`h1{font-size:1.4rem;margin-bottom:.5rem}p{color:#666}</style></head>` +
+		`<body><h1>You have been unsubscribed.</h1><p>You will no longer receive emails from this site.</p></body></html>`))
 }
 
 // ListSubscribers returns all subscribers. GET /api/admin/subscribers
