@@ -1,6 +1,7 @@
 package mailer
 
 import (
+	"crypto/tls"
 	"fmt"
 	"net/smtp"
 	"strings"
@@ -26,11 +27,44 @@ func New(host, port, username, password, from string) *Mailer {
 }
 
 // Send sends a plain-text email to a single recipient.
+// Port 465 uses implicit TLS (SMTPS); all other ports use STARTTLS via smtp.SendMail.
 func (m *Mailer) Send(to, subject, body string) error {
-	addr := m.host + ":" + m.port
-	auth := smtp.PlainAuth("", m.username, m.password, m.host)
-
 	msg := buildMessage(m.from, to, subject, body)
+	addr := m.host + ":" + m.port
+
+	if m.port == "465" {
+		conn, err := tls.Dial("tcp", addr, &tls.Config{ServerName: m.host})
+		if err != nil {
+			return fmt.Errorf("SMTP TLS dial: %w", err)
+		}
+		client, err := smtp.NewClient(conn, m.host)
+		if err != nil {
+			return fmt.Errorf("SMTP client: %w", err)
+		}
+		defer client.Close()
+		if err := client.Auth(smtp.PlainAuth("", m.username, m.password, m.host)); err != nil {
+			return fmt.Errorf("SMTP auth: %w", err)
+		}
+		if err := client.Mail(m.from); err != nil {
+			return fmt.Errorf("SMTP MAIL FROM: %w", err)
+		}
+		if err := client.Rcpt(to); err != nil {
+			return fmt.Errorf("SMTP RCPT TO: %w", err)
+		}
+		w, err := client.Data()
+		if err != nil {
+			return fmt.Errorf("SMTP DATA: %w", err)
+		}
+		if _, err := w.Write([]byte(msg)); err != nil {
+			return fmt.Errorf("SMTP write: %w", err)
+		}
+		if err := w.Close(); err != nil {
+			return fmt.Errorf("SMTP data close: %w", err)
+		}
+		return client.Quit()
+	}
+
+	auth := smtp.PlainAuth("", m.username, m.password, m.host)
 	return smtp.SendMail(addr, auth, m.from, []string{to}, []byte(msg))
 }
 
