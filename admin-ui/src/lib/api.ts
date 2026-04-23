@@ -202,4 +202,7 @@ export const api = {
 
   duplicatePost: (slug: string) =>
     request<{ slug: string }>('POST', `/api/admin/posts/${slug}/duplicate`, undefined, true),
+
+  sendNewsletter: (subject: string, body: string) =>
+    request<void>('POST', '/api/admin/newsletter/send', { subject, body }, true),
 }

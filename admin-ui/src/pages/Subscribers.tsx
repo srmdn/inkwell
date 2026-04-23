@@ -16,6 +16,12 @@ export function Subscribers() {
   const [confirmId, setConfirmId] = useState<number | null>(null)
   const [deleting, setDeleting] = useState(false)
 
+  const [subject, setSubject] = useState('')
+  const [body, setBody] = useState('')
+  const [sending, setSending] = useState(false)
+  const [sendError, setSendError] = useState('')
+  const [sendSuccess, setSendSuccess] = useState(false)
+
   useEffect(() => {
     loadSubscribers()
   }, [])
@@ -42,6 +48,22 @@ export function Subscribers() {
     }
   }
 
+  async function handleSend() {
+    setSendError('')
+    setSendSuccess(false)
+    setSending(true)
+    try {
+      await api.sendNewsletter(subject, body)
+      setSendSuccess(true)
+      setSubject('')
+      setBody('')
+    } catch (err) {
+      setSendError(err instanceof Error ? err.message : 'Failed to send newsletter')
+    } finally {
+      setSending(false)
+    }
+  }
+
   const count = subscribers?.length ?? 0
 
   return (
@@ -56,6 +78,42 @@ export function Subscribers() {
       </div>
 
       <div className="page-content">
+        <div className="settings-card">
+          <div className="settings-card-header">
+            <div>
+              <div className="settings-card-title">Send Newsletter</div>
+              <div className="settings-card-desc">Send an email to all subscribers.</div>
+            </div>
+            <button
+              className="btn-sm btn-sm-primary"
+              onClick={handleSend}
+              disabled={sending || !subject.trim() || !body.trim()}
+            >
+              {sending ? 'Sending...' : 'Send'}
+            </button>
+          </div>
+          {sendError && <p className="state-error">{sendError}</p>}
+          {sendSuccess && <p className="state-success">Newsletter sent.</p>}
+          <div className="field">
+            <label>Subject</label>
+            <input
+              type="text"
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
+              placeholder="Your newsletter subject"
+            />
+          </div>
+          <div className="field">
+            <label>Body</label>
+            <textarea
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+              placeholder="Write your newsletter in plain text..."
+              rows={8}
+            />
+          </div>
+        </div>
+
         {error && <p className="state-error">{error}</p>}
 
         {subscribers === null && !error && (
