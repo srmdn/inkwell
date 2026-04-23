@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.7.0 (2026-04-23)
+
+- **Feature**: `GET /sitemap.xml` returns a standards-compliant XML sitemap of all published posts; useful for SEO and search engine submission
+- **Feature**: `GET /feed.xml` returns an RSS 2.0 feed of the 20 most recent published posts
+- **Feature**: Duplicate post: the post list now has a Duplicate button that creates a draft copy with a "Copy of" prefix and navigates to the editor
+- **Feature**: Change password in dashboard: the Settings page has a Change Password section; a successful change signs the user out immediately
+
+---
+
 ## v0.6.1 (2026-04-06)
 
 - **Fix**: `GET /api/posts/:slug` now includes `hero_image` as a base64 data URI in the response; it was previously only returned by the admin endpoint
