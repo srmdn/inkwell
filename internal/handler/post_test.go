@@ -163,6 +163,37 @@ func TestPublicListExcludesDrafts(t *testing.T) {
 	}
 }
 
+func TestPublicListExcludesFutureDated(t *testing.T) {
+	dir := t.TempDir()
+	h := newTestHandler(t, dir)
+	r := routerWithHandler(h)
+
+	createPost(t, r, "future-post", map[string]any{
+		"title":        "Future",
+		"draft":        false,
+		"publish_date": "2099-01-01",
+	})
+	createPost(t, r, "past-post", map[string]any{
+		"title":        "Past",
+		"draft":        false,
+		"publish_date": "2026-01-01",
+	})
+
+	req := httptest.NewRequest(http.MethodGet, "/api/posts", nil)
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	var posts []map[string]any
+	json.Unmarshal(w.Body.Bytes(), &posts)
+
+	if len(posts) != 1 {
+		t.Errorf("expected 1 post (future-dated excluded), got %d", len(posts))
+	}
+	if len(posts) == 1 && posts[0]["slug"] != "past-post" {
+		t.Errorf("expected slug past-post, got %v", posts[0]["slug"])
+	}
+}
+
 func TestUpdatePost(t *testing.T) {
 	dir := t.TempDir()
 	h := newTestHandler(t, dir)
