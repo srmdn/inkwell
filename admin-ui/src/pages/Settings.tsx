@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { api } from '../lib/api'
 import type { RebuildStatus, SiteSettings } from '../lib/api'
+import { useAuth } from '../contexts/AuthContext'
 
 function formatTime(ts: string | undefined): string {
   if (!ts || ts.startsWith('0001')) return ''
@@ -16,6 +17,8 @@ const defaultSettings: SiteSettings = {
 }
 
 export function Settings() {
+  const { logout } = useAuth()
+
   // Site settings state
   const [settings, setSettings] = useState<SiteSettings>(defaultSettings)
   const [settingsLoading, setSettingsLoading] = useState(true)
@@ -23,6 +26,14 @@ export function Settings() {
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState('')
   const [saveSuccess, setSaveSuccess] = useState(false)
+
+  // Change password state
+  const [currentPassword, setCurrentPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [changing, setChanging] = useState(false)
+  const [changeError, setChangeError] = useState('')
+  const [changeSuccess, setChangeSuccess] = useState(false)
 
   // Rebuild state
   const [status, setStatus] = useState<RebuildStatus | null>(null)
@@ -127,6 +138,31 @@ export function Settings() {
     }
   }
 
+  async function handleChangePassword() {
+    setChangeError('')
+    if (newPassword !== confirmPassword) {
+      setChangeError('New passwords do not match')
+      return
+    }
+    if (newPassword.length < 8) {
+      setChangeError('New password must be at least 8 characters')
+      return
+    }
+    setChanging(true)
+    try {
+      await api.changePassword(currentPassword, newPassword)
+      setChangeSuccess(true)
+      setCurrentPassword('')
+      setNewPassword('')
+      setConfirmPassword('')
+      setTimeout(() => logout(), 1500)
+    } catch (err) {
+      setChangeError(err instanceof Error ? err.message : 'Failed to change password')
+    } finally {
+      setChanging(false)
+    }
+  }
+
   const isRunning = status?.status === 'running' || triggering
   const started = formatTime(status?.started_at)
   const finished = formatTime(status?.finished_at)
@@ -223,6 +259,69 @@ export function Settings() {
                   value={settings.social_linkedin}
                   onChange={(e) => setSettings((s) => ({ ...s, social_linkedin: e.target.value }))}
                   placeholder="https://linkedin.com/in/yourusername"
+                />
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Change Password */}
+        <div className="settings-card" style={{ marginBottom: '1.5rem' }}>
+          <div className="settings-card-header">
+            <div>
+              <div className="settings-card-title">Change Password</div>
+              <div className="settings-card-desc">
+                You will be signed out after a successful change.
+              </div>
+            </div>
+            <button
+              className="btn-sm btn-sm-primary"
+              onClick={handleChangePassword}
+              disabled={changing || changeSuccess}
+            >
+              {changing ? 'Saving...' : 'Change'}
+            </button>
+          </div>
+
+          {changeError && (
+            <p className="state-error" style={{ margin: '1rem 0 0' }}>{changeError}</p>
+          )}
+          {changeSuccess && (
+            <p className="state-success" style={{ margin: '1rem 0 0' }}>
+              Password changed. Signing you out...
+            </p>
+          )}
+
+          {!changeSuccess && (
+            <div className="settings-form">
+              <div className="field">
+                <label htmlFor="current_password">Current Password</label>
+                <input
+                  id="current_password"
+                  type="password"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  autoComplete="current-password"
+                />
+              </div>
+              <div className="field">
+                <label htmlFor="new_password">New Password</label>
+                <input
+                  id="new_password"
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  autoComplete="new-password"
+                />
+              </div>
+              <div className="field">
+                <label htmlFor="confirm_password">Confirm New Password</label>
+                <input
+                  id="confirm_password"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  autoComplete="new-password"
                 />
               </div>
             </div>
