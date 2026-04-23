@@ -28,6 +28,9 @@ export function PostEditor() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
+  const [newsletterState, setNewsletterState] = useState<'idle' | 'confirming' | 'sending' | 'sent' | 'error'>('idle')
+  const [newsletterError, setNewsletterError] = useState('')
+
   const [title, setTitle] = useState('')
   const [postSlug, setPostSlug] = useState('')
   const [slugManual, setSlugManual] = useState(false)
@@ -140,6 +143,18 @@ export function PostEditor() {
       setError(err instanceof Error ? err.message : 'Failed to save')
     } finally {
       setSaving(false)
+    }
+  }
+
+  async function handleSendNewsletter() {
+    setNewsletterState('sending')
+    setNewsletterError('')
+    try {
+      await api.sendNewsletter(title, body)
+      setNewsletterState('sent')
+    } catch (err) {
+      setNewsletterError(err instanceof Error ? err.message : 'Failed to send')
+      setNewsletterState('error')
     }
   }
 
@@ -277,6 +292,43 @@ export function PostEditor() {
               )}
             </div>
           </div>
+
+          {isEdit && !draft && (
+            <div className="meta-section">
+              <div className="field-group-label">Newsletter</div>
+              {newsletterState === 'sent' && (
+                <p className="state-success">Sent to subscribers.</p>
+              )}
+              {newsletterState === 'error' && (
+                <p className="state-error">{newsletterError}</p>
+              )}
+              {newsletterState === 'confirming' && (
+                <div className="confirm-inline">
+                  <span>Send "{title}" to all subscribers?</span>
+                  <button
+                    className="btn-sm btn-sm-primary"
+                    onClick={handleSendNewsletter}
+                  >
+                    Send
+                  </button>
+                  <button
+                    className="btn-sm btn-sm-ghost"
+                    onClick={() => setNewsletterState('idle')}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              )}
+              {(newsletterState === 'idle' || newsletterState === 'error') && (
+                <button
+                  className="btn-sm btn-sm-primary"
+                  onClick={() => setNewsletterState('confirming')}
+                >
+                  Send to subscribers
+                </button>
+              )}
+            </div>
+          )}
 
         </aside>
       </div>
